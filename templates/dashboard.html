@@ -1,0 +1,146 @@
+{# Dashboard landing page showing statistics and top clients. #}
+{% extends 'base.html' %}
+{% block title %}Dashboard - GetConnects Portal{% endblock %}
+{% block content %}
+<h1 class="mb-3">Dashboard</h1>
+<div class="row g-4 mb-4">
+  <div class="col-6 col-lg-3">
+    <div class="card stat-card stat-clients">
+      <div class="card-body d-flex align-items-center justify-content-between">
+        <div>
+          <div class="text-white fw-semibold">Total Clients</div>
+          <div class="h3 mb-0 text-white fw-bold" id="statClients">{{ stats.clients or 0 }}</div>
+        </div>
+        <div class="icon"><i class="fas fa-users"></i></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card stat-card stat-campaigns">
+      <div class="card-body d-flex align-items-center justify-content-between">
+        <div>
+          <div class="text-white fw-semibold">Active Campaigns</div>
+          <div class="h3 mb-0 text-white fw-bold" id="statCampaigns">{{ stats.campaigns or 0 }}</div>
+        </div>
+        <div class="icon"><i class="fas fa-bullhorn"></i></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card stat-card stat-leads">
+      <div class="card-body d-flex align-items-center justify-content-between">
+        <div>
+          <div class="text-white fw-semibold">Total Leads</div>
+          <div class="h3 mb-0 text-white fw-bold" id="statLeads">{{ stats.leads or 0 }}</div>
+        </div>
+        <div class="icon"><i class="fas fa-user-plus"></i></div>
+      </div>
+    </div>
+  </div>
+  <div class="col-6 col-lg-3">
+    <div class="card stat-card stat-leads-week">
+      <div class="card-body d-flex align-items-center justify-content-between">
+        <div>
+          <div class="text-white fw-semibold">Leads This Week</div>
+          <div class="h3 mb-0 text-white fw-bold" id="statLeadsWeek">{{ stats.leads_week or 0 }}</div>
+        </div>
+        <div class="icon"><i class="fas fa-calendar-week"></i></div>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="card">
+  <div class="card-header">
+    <h5 class="mb-0">Leads This Week</h5>
+  </div>
+  <div class="table-responsive">
+    <table class="table mb-0 table-leads-week">
+      <thead>
+        <tr>
+          <th>Company</th>
+          <th>Phone</th>
+          <th>Email</th>
+          <th>Campaigns</th>
+        </tr>
+      </thead>
+      <tbody id="leadRows">
+        {% for client in clients %}
+        <tr>
+          <td>{{ client.company_name }}</td>
+          <td>{{ client.phone }}</td>
+          <td>{{ client.contact_email }}</td>
+          <td>-</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div id="loading" class="text-center p-4 d-none">Loading...</div>
+  </div>
+</div>
+
+<div class="card mt-4">
+  <div class="card-header">
+    <h5 class="mb-0">Leads by Campaign</h5>
+  </div>
+  <div class="card-body">
+    <div id="leadsPerCampaign" style="height: 250px;"></div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block javascripts %}
+  {{ super() }}
+  <script src="{{ url_for('static', filename='assets/plugins/chart-morris/js/raphael.min.js') }}"></script>
+  <script src="{{ url_for('static', filename='assets/plugins/chart-morris/js/morris.min.js') }}"></script>
+  <script>
+    async function loadLeadsWeek() {
+      const loader = document.getElementById('loading');
+      loader.classList.remove('d-none');
+      const res = await fetch('/clients');
+      const data = await res.json();
+      const tbody = document.getElementById('leadRows');
+      tbody.innerHTML = '';
+      data.forEach(c => {
+        const row = `<tr>
+          <td>${c.company_name}</td>
+          <td>${c.phone}</td>
+          <td>${c.contact_email}</td>
+          <td>-</td>
+        </tr>`;
+        tbody.insertAdjacentHTML('beforeend', row);
+      });
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4">No leads</td></tr>';
+      }
+      loader.classList.add('d-none');
+    }
+
+    async function loadStats() {
+      const res = await fetch('/stats');
+      const data = await res.json();
+      document.getElementById('statClients').textContent = data.clients ?? 0;
+      document.getElementById('statCampaigns').textContent = data.campaigns ?? 0;
+      document.getElementById('statLeads').textContent = data.leads ?? 0;
+      document.getElementById('statLeadsWeek').textContent = data.leads_week ?? 0;
+    }
+
+    async function loadLeadsChart() {
+      const res = await fetch('/stats/leads_by_campaign');
+      const data = await res.json();
+      new Morris.Bar({
+        element: 'leadsPerCampaign',
+        data: data.map(d => ({ y: d.campaign, leads: d.leads })),
+        xkey: 'y',
+        ykeys: ['leads'],
+        labels: ['Leads'],
+        barColors: ['#04a9f5'],
+        resize: true
+      });
+    }
+
+    loadLeadsWeek();
+    loadStats();
+    loadLeadsChart();
+  </script>
+{% endblock %}

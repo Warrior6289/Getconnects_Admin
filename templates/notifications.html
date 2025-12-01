@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}Notifications - GetConnects Portal{% endblock %}
+{% block content %}
+<h1 class="mb-3">Notifications</h1>
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Channel</th>
+      <th>Status</th>
+      <th>Message</th>
+      <th>Lead</th>
+      <th>Client</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for log in logs %}
+    <tr>
+      <td>{{ log.channel }}</td>
+      <td>{{ log.status }}</td>
+      <td><a href="/notifications/{{ log.id }}">{{ log.message }}</a></td>
+      <td>{{ log.lead.name if log.lead else 'N/A' }}</td>
+      <td>{{ log.client.company_name if log.client else 'N/A' }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

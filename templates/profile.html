@@ -1,0 +1,52 @@
+{% extends 'base.html' %}
+{% block title %}Profile - GetConnects Portal{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-sm-8">
+    <div class="card">
+      <div class="card-header">
+        <h5>Edit Info</h5>
+      </div>
+      <div class="card-block">
+        <form method="post">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <div class="row">
+            <div class="col-sm-6 mb-4">
+              <div class="form-group">
+                <label for="first_name">First Name</label>
+                <input class="form-control" id="first_name" name="first_name" value="{{ user.first_name or '' }}">
+              </div>
+            </div>
+            <div class="col-sm-6 mb-4">
+              <div class="form-group">
+                <label for="last_name">Last Name</label>
+                <input class="form-control" id="last_name" name="last_name" value="{{ user.last_name or '' }}">
+              </div>
+            </div>
+            <div class="col-sm-12 mb-4">
+              <div class="form-group">
+                <label for="email">Email</label>
+                <input class="form-control" id="email" name="email" value="{{ user.email }}" readonly>
+              </div>
+            </div>
+            <div class="col-sm-12 mb-2">
+              <button type="submit" class="btn btn-primary">Save</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-4">
+    <div class="card">
+      <div class="card-block text-center">
+        <div class="w-50 p-3 mx-auto">
+          <img src="{{ url_for('static', filename='assets/images/user/avatar-1.jpg') }}" class="img-fluid rounded-circle" alt="profile">
+        </div>
+        <h4 class="font-weight-bold h6">{{ user.first_name }} {{ user.last_name }}</h4>
+        <p class="font-italic text-muted">{{ user.email }}</p>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

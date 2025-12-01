@@ -1,0 +1,70 @@
+{% extends 'base.html' %}
+{% block title %}Manage Client - GetConnects Portal{% endblock %}
+{% block content %}
+<h1 class="mb-3">Manage Client</h1>
+<form method="post">
+  {{ form.hidden_tag() }}
+  <div class="mb-3">
+    {{ form.company_name.label(class="form-label") }}
+    {{ form.company_name(class="form-control") }}
+  </div>
+  <div class="mb-3">
+    {{ form.contact_name.label(class="form-label") }}
+    {{ form.contact_name(class="form-control") }}
+  </div>
+  <div class="mb-3">
+    {{ form.contact_email.label(class="form-label") }}
+    {{ form.contact_email(class="form-control") }}
+  </div>
+  <div class="mb-3">
+    {{ form.phone.label(class="form-label") }}
+    {{ form.phone(class="form-control") }}
+  </div>
+  {% if groups %}
+    {% for group_name, types in groups.items() %}
+    <h5 class="mt-4">{{ group_name }}</h5>
+    <table class="table table-sm align-middle">
+      <thead>
+        <tr>
+          <th>Lead Type</th>
+          <th class="text-center">SMS</th>
+          <th class="text-center">Email</th>
+          <th>Template</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for lt in types %}
+        <tr>
+          <td>{{ lt.name }}</td>
+          <td class="text-center">
+            <input class="form-check-input" type="checkbox" name="sms_{{ lt.id }}" {% if settings.get(lt.id) and settings.get(lt.id).sms_enabled %}checked{% endif %}>
+          </td>
+          <td class="text-center">
+            <input class="form-check-input" type="checkbox" name="email_{{ lt.id }}" {% if settings.get(lt.id) and settings.get(lt.id).email_enabled %}checked{% endif %}>
+          </td>
+          <td>
+            <select class="form-select" name="template_{{ lt.id }}">
+              <option value="">Default</option>
+              {% for t in templates %}
+                <option value="{{ t.id }}" {% if settings.get(lt.id) and settings.get(lt.id).template_id == t.id %}selected{% endif %}>{{ t.name }}</option>
+              {% endfor %}
+            </select>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endfor %}
+  {% else %}
+    <p class="text-muted">No lead types found for this client. Assign campaigns to manage lead type notifications.</p>
+  {% endif %}
+  <button class="btn btn-primary mt-3">Save</button>
+</form>
+
+<form id="deleteClientForm" method="post" action="/clients/{{ client.id }}/delete">
+  {{ form.csrf_token }}
+</form>
+<button type="button" class="btn btn-danger mt-3"
+        data-confirm="Are you sure you want to delete this client?"
+        data-form-id="deleteClientForm">Delete</button>
+{% endblock %}

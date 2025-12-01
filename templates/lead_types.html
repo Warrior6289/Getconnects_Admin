@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+{% block title %}Lead Types - GetConnects Portal{% endblock %}
+
+{% block content %}
+<h1 class="mb-4">Lead Types</h1>
+
+{% set themes = {
+  'B2B': {
+    'bg': 'bg-info-subtle',
+    'text': 'text-info',
+    'btn': 'btn-outline-info',
+    'no': 'text-info-emphasis fw-medium fst-italic'
+  },
+  'Real Estate': {
+    'bg': 'bg-success-subtle',
+    'text': 'text-success',
+    'btn': 'btn-outline-success',
+    'no': 'text-success-emphasis fst-italic'
+  },
+  'Investor': {
+    'bg': 'bg-warning-subtle',
+    'text': 'text-warning',
+    'btn': 'btn-outline-warning',
+    'no': 'text-warning-emphasis fst-italic'
+  }
+} %}
+
+{% for g in groups %}
+  {% set theme = themes.get(g.name, {
+    'bg': 'bg-light',
+    'text': '',
+    'btn': 'btn-outline-primary',
+    'no': 'text-muted'
+  }) %}
+  <div class="mb-4 shadow-sm rounded-3 p-3 {{ theme.bg }}">
+    <div class="d-flex justify-content-between align-items-center">
+      <h2 class="h5 mb-0 {{ theme.text }}">{{ g.name }}</h2>
+      <a href="{{ url_for('pages.manage_dispositions', group_id=g.id) }}" class="btn btn-sm {{ theme.btn }}">
+        <i class="fas fa-cog me-1"></i> Manage
+      </a>
+    </div>
+    <ul class="list-group list-group-flush mt-2">
+      {% for lt in g.lead_types %}
+        <li class="list-group-item">{{ lt.name }}</li>
+      {% else %}
+        <li class="list-group-item {{ theme.no }}">No lead types</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% else %}
+  <p>No lead types.</p>
+{% endfor %}
+{% endblock %}
+

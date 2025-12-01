@@ -1,0 +1,715 @@
+{% extends 'base.html' %}
+{% block title %}Leads - GetConnects Portal{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div class="page-block">
+    <div class="row align-items-center">
+      <div class="col-md-12">
+        <div class="page-header-title">
+          <h5 class="m-b-10">Leads</h5>
+        </div>
+        <ul class="breadcrumb">
+          <li class="breadcrumb-item"><a href="/"><i class="feather icon-home"></i></a></li>
+          <li class="breadcrumb-item"><a href="javascript:">Pages</a></li>
+          <li class="breadcrumb-item"><a href="javascript:">Leads</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<form method="get" class="mb-3" id="filterForm">
+  <div class="form-row">
+    <div class="col">
+      <select name="client_id" id="filter_client" class="form-control">
+        <option value="">All Clients</option>
+        {% for c in clients %}
+        <option value="{{ c.id }}" {% if filters.client_id == c.id|string %}selected{% endif %}>{{ c.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col">
+      <select name="campaign_id" id="filter_campaign" class="form-control">
+        <option value="">All Campaigns</option>
+        {% for c in campaigns %}
+        <option value="{{ c.id }}" data-client="{{ c.client_id }}" {% if filters.campaign_id == c.id|string %}selected{% endif %}>{{ c.name }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col">
+      <select name="lead_type" id="filter_lead_type" class="form-control">
+        <option value="">All Lead Types</option>
+        {% for lt in lead_types %}
+        <option value="{{ lt }}" {% if filters.lead_type == lt %}selected{% endif %}>{{ lt }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col">
+      <input type="date" name="start_date" class="form-control" value="{{ filters.start_date }}">
+    </div>
+    <div class="col">
+      <input type="date" name="end_date" class="form-control" value="{{ filters.end_date }}">
+    </div>
+    <div class="col">
+      <button type="submit" class="btn btn-primary">Filter</button>
+      <a id="downloadReport" href="{{ url_for('pages.report_options', **filters) }}" class="btn btn-secondary" target="_blank">Download CSV</a>
+  </div>
+  </div>
+</form>
+<div class="text-end mb-3">
+  <button class="btn btn-secondary" data-toggle="modal" data-target="#importModal">Import CSV</button>
+  <button class="btn btn-danger" id="bulkDeleteButton" form="bulkForm" disabled>Delete Selected</button>
+  <button class="btn btn-primary" data-toggle="modal" data-target="#addLeadModal">+ Add Lead</button>
+</div>
+<form id="bulkForm" method="post" action="{{ url_for('pages.bulk_delete_leads') }}">
+  {{ form.csrf_token }}
+  <div class="card">
+    <div class="table-responsive">
+      <table class="table table-striped mb-0">
+        <thead>
+          <tr>
+            <th><input type="checkbox" id="selectAll"></th>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th>Email</th>
+            <th>Company</th>
+            <th>Secondary Number</th>
+            <th>Client</th>
+            <th>Campaign</th>
+            <th>Lead Type</th>
+            <th>Caller</th>
+            <th>Calling Number</th>
+            <th>Notes</th>
+            <th>Created At</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for lead in leads %}
+          <tr>
+            <td><input type="checkbox" class="lead-checkbox" name="lead_ids" value="{{ lead.id }}"></td>
+            <td>{{ lead.id }}</td>
+            <td>{{ lead.name }}</td>
+            <td>{{ lead.phone }}</td>
+            <td>{{ lead.address }}</td>
+            <td>{{ lead.email }}</td>
+            <td>{{ lead.company }}</td>
+            <td>{{ lead.secondary_phone }}</td>
+            <td>{{ lead.client }}</td>
+            <td>{{ lead.campaign }}</td>
+            <td>{{ lead.lead_type }}</td>
+            <td>{{ lead.caller_name }}</td>
+            <td>{{ lead.caller_number }}</td>
+            <td>{{ lead.notes }}</td>
+            <td>{{ lead.created_at }}</td>
+            <td>
+              <button type="button" class="btn btn-sm btn-secondary edit-btn"
+                data-id="{{ lead.id }}"
+                data-name="{{ lead.name }}"
+                data-phone="{{ lead.phone }}"
+                data-address="{{ lead.address }}"
+                data-email="{{ lead.email }}"
+                data-company="{{ lead.company }}"
+                data-secondary_phone="{{ lead.secondary_phone }}"
+                data-campaign_id="{{ lead.campaign_id }}"
+                data-lead_type="{{ lead.lead_type }}"
+                data-caller_name="{{ lead.caller_name }}"
+                data-caller_number="{{ lead.caller_number }}"
+                data-notes="{{ lead.notes }}">Edit</button>
+            </td>
+          </tr>
+          {% endfor %}
+          {% if leads|length == 0 %}
+          <tr><td colspan="16">No leads</td></tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</form>
+
+<nav aria-label="Page navigation example">
+  <ul class="pagination">
+    <li class="page-item {% if page <= 1 %}disabled{% endif %}">
+      <a class="page-link" href="{{ url_for('pages.leads_page', page=page-1, **filters) }}">Previous</a>
+    </li>
+    {% for p in range(1, total_pages + 1) %}
+    <li class="page-item {% if p == page %}active{% endif %}">
+      <a class="page-link" href="{{ url_for('pages.leads_page', page=p, **filters) }}">{{ p }}</a>
+    </li>
+    {% endfor %}
+    <li class="page-item {% if page >= total_pages %}disabled{% endif %}">
+      <a class="page-link" href="{{ url_for('pages.leads_page', page=page+1, **filters) }}">Next</a>
+    </li>
+  </ul>
+</nav>
+
+<div class="modal fade" id="importModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog" id="importModalDialog">
+    <div class="modal-content">
+      <form action="{{ url_for('pages.import_leads') }}" method="post" enctype="multipart/form-data">
+        {{ upload_form.hidden_tag() }}
+        <div class="modal-header">
+          <h5 class="modal-title">Import Leads</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            {{ upload_form.file.label(class="form-label") }}
+            {{ upload_form.file(class="form-control", id="importFile") }}
+          </div>
+          <div id="mappingSection" style="display:none; max-height:300px; overflow-y:auto;">
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped table-sm">
+                <thead>
+                  <tr>
+                    <th>CSV Column</th>
+                    <th>Sample Data</th>
+                    <th>Map To</th>
+                    <th>Expected Format</th>
+                  </tr>
+                </thead>
+                <tbody id="mappingTableBody"></tbody>
+              </table>
+            </div>
+            {{ upload_form.name_column(id='name_column') }}
+            {{ upload_form.phone_column(id='phone_column') }}
+            {{ upload_form.email_column(id='email_column', style='display:none') }}
+            {{ upload_form.address_column(id='address_column', style='display:none') }}
+            {{ upload_form.company_column(id='company_column', style='display:none') }}
+            {{ upload_form.secondary_phone_column(id='secondary_phone_column', style='display:none') }}
+            {{ upload_form.campaign_id_column(id='campaign_id_column', style='display:none') }}
+            {{ upload_form.lead_type_column(id='lead_type_column', style='display:none') }}
+            {{ upload_form.caller_name_column(id='caller_name_column', style='display:none') }}
+            {{ upload_form.caller_number_column(id='caller_number_column', style='display:none') }}
+            {{ upload_form.notes_column(id='notes_column', style='display:none') }}
+          </div>
+          <div id="mappingError" class="text-danger small" style="display:none;"></div>
+          <div class="form-check">
+            {{ upload_form.consent(class="form-check-input", id="consentCheckbox") }}
+            <label class="form-check-label" for="consentCheckbox">I consent to import these leads</label>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="importButton" disabled>Import</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="addLeadModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form method="post">
+        {{ form.hidden_tag() }}
+        <div class="modal-header">
+          <h5 class="modal-title">Add New Lead</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            {{ form.name.label(class="form-label") }}
+            {{ form.name(class="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.phone.label(class="form-label") }}
+            {{ form.phone(class="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.address.label(class="form-label") }}
+            {{ form.address(class="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.email.label(class="form-label") }}
+            {{ form.email(class="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.company.label(class="form-label") }}
+            {{ form.company(class="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.secondary_phone.label(class="form-label") }}
+            {{ form.secondary_phone(class="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.campaign_id.label(class="form-label") }}
+            {{ form.campaign_id(class="form-control") }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Client</label>
+            <input type="text" id="clientName" class="form-control" readonly>
+          </div>
+          <div class="mb-3">
+            {{ form.lead_type.label(class="form-label") }}
+            {{ form.lead_type(class="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.caller_name.label(class="form-label") }}
+            {{ form.caller_name(class="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.caller_number.label(class="form-label") }}
+            {{ form.caller_number(class="form-control") }}
+          </div>
+          <div class="mb-3">
+            {{ form.notes.label(class="form-label") }}
+            {{ form.notes(class="form-control") }}
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="editLeadModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <form id="editLeadForm" method="post">
+        {{ edit_form.hidden_tag() }}
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Lead</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        </div>
+        <div class="modal-body">
+          <div class="mb-3">
+            {{ edit_form.name.label(class="form-label") }}
+            {{ edit_form.name(class="form-control", id="edit_name") }}
+          </div>
+          <div class="mb-3">
+            {{ edit_form.phone.label(class="form-label") }}
+            {{ edit_form.phone(class="form-control", id="edit_phone") }}
+          </div>
+          <div class="mb-3">
+            {{ edit_form.address.label(class="form-label") }}
+            {{ edit_form.address(class="form-control", id="edit_address") }}
+          </div>
+          <div class="mb-3">
+            {{ edit_form.email.label(class="form-label") }}
+            {{ edit_form.email(class="form-control", id="edit_email") }}
+          </div>
+          <div class="mb-3">
+            {{ edit_form.company.label(class="form-label") }}
+            {{ edit_form.company(class="form-control", id="edit_company") }}
+          </div>
+          <div class="mb-3">
+            {{ edit_form.secondary_phone.label(class="form-label") }}
+            {{ edit_form.secondary_phone(class="form-control", id="edit_secondary_phone") }}
+          </div>
+          <div class="mb-3">
+            {{ edit_form.campaign_id.label(class="form-label") }}
+            {{ edit_form.campaign_id(class="form-control", id="edit_campaign_id") }}
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Client</label>
+            <input type="text" id="edit_clientName" class="form-control" readonly>
+          </div>
+          <div class="mb-3">
+            {{ edit_form.lead_type.label(class="form-label") }}
+            {{ edit_form.lead_type(class="form-control", id="edit_lead_type") }}
+          </div>
+          <div class="mb-3">
+            {{ edit_form.caller_name.label(class="form-label") }}
+            {{ edit_form.caller_name(class="form-control", id="edit_caller_name") }}
+          </div>
+          <div class="mb-3">
+            {{ edit_form.caller_number.label(class="form-label") }}
+            {{ edit_form.caller_number(class="form-control", id="edit_caller_number") }}
+          </div>
+          <div class="mb-3">
+            {{ edit_form.notes.label(class="form-label") }}
+            {{ edit_form.notes(class="form-control", id="edit_notes") }}
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save</button>
+          <button type="submit" class="btn btn-danger" id="deleteLeadButton">Delete</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+  const campaignClients = {{ campaigns | tojson }};
+  const filterClient = document.getElementById('filter_client');
+  const filterCampaign = document.getElementById('filter_campaign');
+  const filterLeadType = document.getElementById('filter_lead_type');
+
+  function updateFilterCampaigns(selected = '') {
+    if (!filterCampaign) return;
+    const clientId = filterClient ? filterClient.value : '';
+    const opts = ['<option value="">All Campaigns</option>'];
+    campaignClients.forEach(c => {
+      if (!clientId || String(c.client_id) === clientId) {
+        opts.push(`<option value="${c.id}" data-client="${c.client_id}">${c.name}</option>`);
+      }
+    });
+    filterCampaign.innerHTML = opts.join('');
+    if (selected) filterCampaign.value = selected;
+  }
+
+  function updateFilterLeadTypes(selected = '') {
+    if (!filterLeadType) return;
+    const campaignId = filterCampaign ? filterCampaign.value : '';
+    const types = new Set();
+    if (campaignId) {
+      const camp = campaignClients.find(c => c.id === campaignId);
+      if (camp) (camp.lead_types || []).forEach(t => types.add(t));
+    } else {
+      campaignClients.forEach(c => (c.lead_types || []).forEach(t => types.add(t)));
+    }
+    const opts = ['<option value="">All Lead Types</option>'];
+    Array.from(types).forEach(t => opts.push(`<option value="${t}">${t}</option>`));
+    filterLeadType.innerHTML = opts.join('');
+    if (selected) filterLeadType.value = selected;
+  }
+
+  function updateReportLink() {
+    const form = document.getElementById('filterForm');
+    const link = document.getElementById('downloadReport');
+    if (!form || !link) return;
+    const params = new URLSearchParams(new FormData(form));
+    link.href = `/leads/report/options?${params.toString()}`;
+  }
+
+  if (filterClient && filterCampaign && filterLeadType) {
+    const initCampaign = "{{ filters.campaign_id }}";
+    const initLeadType = "{{ filters.lead_type }}";
+    updateFilterCampaigns(initCampaign);
+    updateFilterLeadTypes(initLeadType);
+
+    filterClient.addEventListener('change', () => {
+      updateFilterCampaigns();
+      updateFilterLeadTypes();
+      updateReportLink();
+    });
+    filterCampaign.addEventListener('change', () => {
+      updateFilterLeadTypes();
+      updateReportLink();
+    });
+    filterLeadType.addEventListener('change', updateReportLink);
+    const startDate = document.querySelector('input[name="start_date"]');
+    const endDate = document.querySelector('input[name="end_date"]');
+    [startDate, endDate].forEach(el => el && el.addEventListener('change', updateReportLink));
+    updateReportLink();
+  }
+  const campaignSelect = document.getElementById('campaign_id');
+  const leadTypeSelect = document.getElementById('lead_type');
+
+  if (campaignSelect && leadTypeSelect) {
+    function updateClientName() {
+      const selected = campaignClients.find(c => c.id === campaignSelect.value);
+      const clientField = document.getElementById('clientName');
+      if (clientField) {
+        clientField.value = selected && selected.client ? selected.client : 'None';
+      }
+    }
+
+    function updateLeadTypeOptions(selectEl, campaignId, selectedValue = '') {
+      const campaign = campaignClients.find(c => c.id === campaignId);
+      const types = campaign ? campaign.lead_types || [] : [];
+      const options = ['<option value="">Select lead type</option>']
+        .concat(types.map(t => `<option value="${t}">${t}</option>`))
+        .join('');
+      selectEl.innerHTML = options;
+      if (selectedValue) selectEl.value = selectedValue;
+    }
+
+    campaignSelect.addEventListener('change', function () {
+      updateClientName();
+      updateLeadTypeOptions(leadTypeSelect, campaignSelect.value);
+    });
+    updateClientName();
+    updateLeadTypeOptions(leadTypeSelect, campaignSelect.value);
+  }
+
+  const fileInput = document.getElementById('importFile');
+  const mappingSection = document.getElementById('mappingSection');
+  const mappingFields = [
+    'name',
+    'phone',
+    'email',
+    'address',
+    'company',
+    'secondary_phone',
+    'campaign_id',
+    'lead_type',
+    'caller_name',
+    'caller_number',
+    'notes'
+  ];
+  const fieldLabels = {
+    name: 'Name',
+    phone: 'Phone',
+    email: 'Email',
+    address: 'Address',
+    company: 'Company',
+    secondary_phone: 'Secondary Number',
+    campaign_id: 'Campaign',
+    lead_type: 'Lead Type',
+    caller_name: 'Caller',
+    caller_number: 'Calling Number',
+    notes: 'Notes'
+  };
+  const fieldExamples = {
+    name: 'John Doe',
+    phone: '555-123-4567',
+    email: 'john@example.com',
+    address: '123 Main St',
+    company: 'Acme Corp',
+    secondary_phone: '555-987-6543',
+    campaign_id: 'My Campaign',
+    lead_type: 'New Lead',
+    caller_name: 'Agent Name',
+    caller_number: '555-000-1111',
+    notes: 'Interested in product'
+  };
+  const consentCheckbox = document.getElementById('consentCheckbox');
+  const importButton = document.getElementById('importButton');
+  const nameField = document.getElementById('name_column');
+  const phoneField = document.getElementById('phone_column');
+  const mappingError = document.getElementById('mappingError');
+
+  function updateDisabledOptions() {
+    const selected = Array.from(document.querySelectorAll('.map-select'))
+      .map(s => s.value)
+      .filter(Boolean);
+    document.querySelectorAll('.map-select').forEach(sel => {
+      sel.querySelectorAll('option').forEach(opt => {
+        if (opt.value === '') return;
+        opt.disabled = selected.includes(opt.value) && sel.value !== opt.value;
+      });
+    });
+  }
+
+  function updateImportButtonState() {
+    const nameMapped = nameField && nameField.value;
+    const phoneMapped = phoneField && phoneField.value;
+    const consented = consentCheckbox && consentCheckbox.checked;
+    const ready = nameMapped && phoneMapped && consented;
+    if (importButton) importButton.disabled = !ready;
+    if (mappingError) {
+      if (!nameMapped || !phoneMapped) {
+        if (mappingSection && mappingSection.style.display !== 'none') {
+          mappingError.style.display = 'block';
+          mappingError.textContent = 'Please map both Name and Phone columns.';
+        } else {
+          mappingError.style.display = 'none';
+          mappingError.textContent = '';
+        }
+      } else {
+        mappingError.style.display = 'none';
+        mappingError.textContent = '';
+      }
+    }
+  }
+
+  function parseCSV(text) {
+    const rows = [];
+    let row = [];
+    let cell = '';
+    let inQuotes = false;
+    for (let i = 0; i < text.length; i++) {
+      const char = text[i];
+      if (char === '"') {
+        if (inQuotes && text[i + 1] === '"') {
+          cell += '"';
+          i++;
+        } else {
+          inQuotes = !inQuotes;
+        }
+      } else if (char === ',' && !inQuotes) {
+        row.push(cell);
+        cell = '';
+      } else if ((char === '\n' || char === '\r') && !inQuotes) {
+        if (char === '\r' && text[i + 1] === '\n') i++;
+        row.push(cell);
+        rows.push(row);
+        row = [];
+        cell = '';
+      } else {
+        cell += char;
+      }
+    }
+    row.push(cell);
+    rows.push(row);
+    return rows;
+  }
+
+  if (fileInput) {
+    fileInput.addEventListener('change', function () {
+      const file = this.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const rows = parseCSV(e.target.result).filter(r => r.some(c => c.trim() !== ''));
+        if (!rows.length) return;
+        const headers = rows[0];
+        const sampleRows = rows.slice(1, 3);
+        const tbody = document.getElementById('mappingTableBody');
+        tbody.innerHTML = '';
+        mappingFields.forEach(f => {
+          const hidden = document.getElementById(f + '_column');
+          if (hidden) hidden.value = '';
+        });
+        headers.forEach((header, idx) => {
+          const examples = sampleRows.map(r => r[idx] || '').filter(Boolean);
+          const exampleHtml = examples.join('<br>');
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+          <td>${header}</td>
+          <td>${exampleHtml}</td>
+          <td>
+            <select class="custom-select map-select" data-header="${header}">
+              <option value="">Select field</option>
+              ${mappingFields.map(f => `<option value="${f}">${fieldLabels[f]}</option>`).join('')}
+            </select>
+          </td>
+          <td class="expected"></td>
+          `;
+          tbody.appendChild(tr);
+          const select = tr.querySelector('select');
+          const expectedCell = tr.querySelector('.expected');
+          select.addEventListener('change', function () {
+            const field = this.value;
+            document.querySelectorAll('.map-select').forEach(other => {
+              if (other !== this && other.value === field) {
+                mappingFields.forEach(f => {
+                  const hidden = document.getElementById(f + '_column');
+                  if (hidden && hidden.value === other.dataset.header) {
+                    hidden.value = '';
+                  }
+                });
+                other.value = '';
+                other.closest('tr').querySelector('.expected').innerHTML = '';
+              }
+            });
+            mappingFields.forEach(f => {
+              const hidden = document.getElementById(f + '_column');
+              if (hidden && hidden.value === header) {
+                hidden.value = '';
+              }
+            });
+            if (field) {
+              document.getElementById(field + '_column').value = header;
+              expectedCell.innerHTML = fieldExamples[field] || '';
+            } else {
+              expectedCell.innerHTML = '';
+            }
+            updateDisabledOptions();
+            updateImportButtonState();
+          });
+          const normalized = header.trim().toLowerCase();
+          const autoField = mappingFields.find(f => {
+            return f === normalized || fieldLabels[f].toLowerCase() === normalized;
+          });
+          if (autoField && !document.getElementById(autoField + '_column').value) {
+            select.value = autoField;
+            document.getElementById(autoField + '_column').value = header;
+            expectedCell.innerHTML = fieldExamples[autoField] || '';
+          }
+        });
+        updateDisabledOptions();
+        mappingSection.style.display = 'block';
+        updateImportButtonState();
+        const dialog = document.getElementById('importModalDialog');
+        if (dialog) {
+          dialog.classList.add('modal-lg');
+          dialog.style.maxWidth = '90%';
+          dialog.style.width = '90%';
+        }
+      };
+      reader.readAsText(file);
+    });
+  }
+  $('#importModal').on('hidden.bs.modal', function () {
+    mappingSection.style.display = 'none';
+    if (fileInput) fileInput.value = '';
+    const dialog = document.getElementById('importModalDialog');
+    if (dialog) {
+      dialog.classList.remove('modal-lg');
+      dialog.style.maxWidth = '';
+      dialog.style.width = '';
+    }
+    if (consentCheckbox) {
+      consentCheckbox.checked = false;
+    }
+    if (nameField) nameField.value = '';
+    if (phoneField) phoneField.value = '';
+    updateDisabledOptions();
+    updateImportButtonState();
+  });
+  if (consentCheckbox) {
+    consentCheckbox.addEventListener('change', function () {
+      updateImportButtonState();
+    });
+  }
+
+  // Bulk selection logic
+  function updateBulkButton() {
+    const anyChecked = document.querySelectorAll('.lead-checkbox:checked').length > 0;
+    document.getElementById('bulkDeleteButton').disabled = !anyChecked;
+  }
+  const selectAll = document.getElementById('selectAll');
+  if (selectAll) {
+    selectAll.addEventListener('change', function () {
+      document.querySelectorAll('.lead-checkbox').forEach(cb => {
+        cb.checked = selectAll.checked;
+      });
+      updateBulkButton();
+    });
+  }
+  document.querySelectorAll('.lead-checkbox').forEach(cb => {
+    cb.addEventListener('change', updateBulkButton);
+  });
+
+  // Edit lead modal
+  const editButtons = document.querySelectorAll('.edit-btn');
+  const editForm = document.getElementById('editLeadForm');
+  const deleteLeadButton = document.getElementById('deleteLeadButton');
+  const editCampaignSelect = document.getElementById('edit_campaign_id');
+  const editLeadTypeSelect = document.getElementById('edit_lead_type');
+  function updateEditClientName() {
+    const selected = campaignClients.find(c => c.id === editCampaignSelect.value);
+    document.getElementById('edit_clientName').value =
+      selected && selected.client ? selected.client : 'None';
+  }
+  if (editCampaignSelect) {
+    editCampaignSelect.addEventListener('change', function () {
+      updateEditClientName();
+      updateLeadTypeOptions(editLeadTypeSelect, editCampaignSelect.value);
+    });
+  }
+  editButtons.forEach(btn => {
+    btn.addEventListener('click', function () {
+      editForm.action = `/leads/${btn.dataset.id}/update`;
+      deleteLeadButton.setAttribute('formaction', `/leads/${btn.dataset.id}/delete`);
+      document.getElementById('edit_name').value = btn.dataset.name || '';
+      document.getElementById('edit_phone').value = btn.dataset.phone || '';
+      document.getElementById('edit_address').value = btn.dataset.address || '';
+      document.getElementById('edit_email').value = btn.dataset.email || '';
+      document.getElementById('edit_company').value = btn.dataset.company || '';
+      document.getElementById('edit_secondary_phone').value = btn.dataset.secondary_phone || '';
+      document.getElementById('edit_campaign_id').value = btn.dataset.campaign_id || '';
+      updateLeadTypeOptions(editLeadTypeSelect, btn.dataset.campaign_id, btn.dataset.lead_type || '');
+      document.getElementById('edit_caller_name').value = btn.dataset.caller_name || '';
+      document.getElementById('edit_caller_number').value = btn.dataset.caller_number || '';
+      document.getElementById('edit_notes').value = btn.dataset.notes || '';
+      updateEditClientName();
+      $('#editLeadModal').modal('show');
+    });
+  });
+</script>
+{% endblock %}

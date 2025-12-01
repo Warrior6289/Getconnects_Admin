@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block title %}Campaigns - GetConnects Portal{% endblock %}
+
+{% block stylesheets %}
+  {{ super() }}
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
+  <style>
+    /* Align length selector and search input on one row */
+    #campaignsTable_wrapper .row:first-child {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: .5rem;
+    }
+    #campaignsTable_wrapper .row:first-child > div {
+      flex: 0 0 auto;
+      width: auto;
+    }
+
+    /* Search bar spacing */
+    #campaignsTable_filter {
+      margin-left: auto;
+      margin-top: 10px;
+    }
+
+    /* Rounded search bar */
+    #campaignsTable_filter input {
+      border-radius: 50rem;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+<h1 class="mb-3">Campaigns</h1>
+<form method="post" action="/campaigns/sync" class="mb-3">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+  <button class="btn btn-primary">Sync Campaigns</button>
+</form>
+<div class="card">
+  <div class="table-responsive">
+    <table id="campaignsTable" class="table table-striped table-hover mb-0">
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Status</th>
+          <th>Client</th>
+          <th>Lead Type Groups</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="campaignRows"></tbody>
+    </table>
+    <div id="loading" class="text-center p-4 d-none">Loading...</div>
+  </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+  {{ super() }}
+  <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+  <script>
+  async function loadCampaigns() {
+    const loader = document.getElementById('loading');
+    loader.classList.remove('d-none');
+    const res = await fetch('/api/campaigns');
+    const data = await res.json();
+    const tbody = document.getElementById('campaignRows');
+    tbody.innerHTML = '';
+    data.forEach(c => {
+      const groups = c.lead_type_groups && c.lead_type_groups.length > 0
+        ? c.lead_type_groups.join(', ')
+        : 'not yet assigned';
+      const row = `<tr>
+        <td>${c.id}</td>
+        <td>${c.campaign_name}</td>
+        <td>${c.status || ''}</td>
+        <td>${c.client_name || ''}</td>
+        <td>${groups}</td>
+        <td><a href="/campaigns/${c.id}" class="btn btn-sm btn-secondary">Manage</a></td>
+      </tr>`;
+      tbody.insertAdjacentHTML('beforeend', row);
+    });
+    if (data.length === 0) {
+      tbody.innerHTML = '<tr><td colspan="6">No campaigns</td></tr>';
+    }
+    loader.classList.add('d-none');
+  }
+
+  document.addEventListener('DOMContentLoaded', async () => {
+    await loadCampaigns();
+    $('#campaignsTable').DataTable();
+
+    // customize search input
+    const searchInput = document.querySelector('#campaignsTable_filter input');
+    if (searchInput) {
+      searchInput.placeholder = 'Search campaigns…';
+      searchInput.classList.add('form-control', 'form-control-sm', 'rounded-pill');
+    }
+    const lengthSelect = document.querySelector('#campaignsTable_length select');
+    if (lengthSelect) {
+      lengthSelect.classList.add('form-select', 'form-select-sm');
+    }
+  });
+  </script>
+{% endblock %}

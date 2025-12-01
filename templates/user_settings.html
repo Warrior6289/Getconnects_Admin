@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% block title %}Permission Management - GetConnects Portal{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-header">
+        <h5>Add User</h5>
+      </div>
+      <div class="card-block">
+        <form method="post" class="mb-4">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <input type="hidden" name="action" value="add" />
+          <div class="form-row">
+            <div class="col-sm-3 mb-2">
+              <input type="text" name="first_name" placeholder="First Name" class="form-control" required>
+            </div>
+            <div class="col-sm-3 mb-2">
+              <input type="text" name="last_name" placeholder="Last Name" class="form-control" required>
+            </div>
+            <div class="col-sm-3 mb-2">
+              <input type="email" name="email" placeholder="Email" class="form-control" required>
+            </div>
+          </div>
+          <ul class="nav nav-tabs mb-2" id="addUserTabs" role="tablist">
+            <li class="nav-item">
+              <a class="nav-link active" id="add-role-tab" data-toggle="tab" href="#add-role" role="tab">Role</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" id="add-perms-tab" data-toggle="tab" href="#add-perms" role="tab">Permissions</a>
+            </li>
+          </ul>
+          <div class="tab-content mb-2">
+            <div class="tab-pane fade show active" id="add-role" role="tabpanel" aria-labelledby="add-role-tab">
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="role" value="admin" id="add_role_admin">
+                <label class="form-check-label" for="add_role_admin">Admin</label>
+              </div>
+              <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" name="role" value="staff" id="add_role_staff" checked>
+                <label class="form-check-label" for="add_role_staff">Staff</label>
+              </div>
+            </div>
+            <div class="tab-pane fade" id="add-perms" role="tabpanel" aria-labelledby="add-perms-tab">
+              {% for path, label in page_options %}
+              <div class="form-check form-check-inline">
+                <input type="checkbox" name="pages" value="{{ path }}" class="form-check-input" id="add_page_{{ loop.index }}">
+                <label class="form-check-label" for="add_page_{{ loop.index }}">{{ label }}</label>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          <button class="btn btn-primary">Add</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-sm-12">
+    <div class="card">
+      <div class="card-header">
+        <h5>Existing Users</h5>
+      </div>
+      <div class="card-block">
+        <div class="table-responsive">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>First Name</th><th>Last Name</th><th>Email</th><th>UID</th><th>Permissions</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for user in users %}
+              <tr>
+                <td>{{ user.first_name }}</td>
+                <td>{{ user.last_name }}</td>
+                <td>{{ user.email }}</td>
+                <td>{{ user.uid }}</td>
+                <td>
+                  <form method="post" class="mb-2">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+                    <input type="hidden" name="action" value="update" />
+                    <input type="hidden" name="user_id" value="{{ user.id }}" />
+                    <ul class="nav nav-tabs mb-2" id="userTabs_{{ user.id }}" role="tablist">
+                      <li class="nav-item">
+                        <a class="nav-link active" id="role-tab-{{ user.id }}" data-toggle="tab" href="#role-{{ user.id }}" role="tab">Role</a>
+                      </li>
+                      <li class="nav-item">
+                        <a class="nav-link" id="perms-tab-{{ user.id }}" data-toggle="tab" href="#perms-{{ user.id }}" role="tab">Permissions</a>
+                      </li>
+                    </ul>
+                    <div class="tab-content mb-2">
+                      <div class="tab-pane fade show active" id="role-{{ user.id }}" role="tabpanel" aria-labelledby="role-tab-{{ user.id }}">
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" name="role" value="admin" id="role_admin_{{ user.id }}" {% if user.is_superuser %}checked{% endif %}>
+                          <label class="form-check-label" for="role_admin_{{ user.id }}">Admin</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="radio" name="role" value="staff" id="role_staff_{{ user.id }}" {% if user.is_staff and not user.is_superuser %}checked{% endif %}>
+                          <label class="form-check-label" for="role_staff_{{ user.id }}">Staff</label>
+                        </div>
+                      </div>
+                      <div class="tab-pane fade" id="perms-{{ user.id }}" role="tabpanel" aria-labelledby="perms-tab-{{ user.id }}">
+                        {% for path, label in page_options %}
+                        <div class="form-check form-check-inline">
+                          <input class="form-check-input" type="checkbox" name="pages" value="{{ path }}" {% if path in user.permissions %}checked{% endif %} id="perm_{{ loop.index }}_{{ user.id }}">
+                          <label class="form-check-label" for="perm_{{ loop.index }}_{{ user.id }}">{{ label }}</label>
+                        </div>
+                        {% endfor %}
+                      </div>
+                    </div>
+                    <button class="btn btn-sm btn-secondary">Save</button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,178 @@
+<!-- Login template renders the authentication form for users.
+     This page does not extend the main layout because it is used
+     prior to authentication. -->
+<!doctype html>
+<html lang="en">
+  <head>
+    <title>Login | GetConnects Portal</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=0, minimal-ui" />
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
+    <!-- Favicon and fonts used throughout the application -->
+    <link rel="icon" href="{{ url_for('static', filename='assets/images/favicon.ico') }}" type="image/x-icon" />
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+    <!-- Core styles for the login page -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/css/style.css') }}" id="main-style-link" />
+  </head>
+  <body data-pc-preset="preset-1" data-pc-sidebar-caption="true" data-pc-direction="ltr" data-pc-theme="light">
+    <!-- Loading animation displayed while assets are fetched -->
+    <div class="loader-bg"><div class="loader-track"><div class="loader-fill"></div></div></div>
+    <!-- Authentication container -->
+    <div class="auth-main">
+      <div class="auth-wrapper v1">
+        <div class="auth-form">
+          <div class="position-relative">
+            <!-- Decorative background shapes -->
+            <div class="auth-bg">
+              <span class="r"></span>
+              <span class="r s"></span>
+              <span class="r s"></span>
+              <span class="r"></span>
+            </div>
+            <div class="card mb-0">
+              <div class="card-body">
+                <div class="text-center">
+                  <!-- Company logo -->
+                  <a href="#"><img src="{{ url_for('static', filename='assets/images/logo-dark.png') }}" alt="logo" /></a>
+                </div>
+                <h4 class="text-center f-w-500 mt-4 mb-3">Login</h4>
+                {% if missing_keys %}
+                <div class="alert alert-warning" role="alert">
+                  Supabase configuration is incomplete. Missing keys:
+                  {{ missing_keys | join(', ') }}.
+                </div>
+                {% endif %}
+                <div id="login-error" class="alert alert-danger d-none" role="alert"></div>
+                <!-- Login form -->
+                <form id="login-form">
+                  <!-- Email field -->
+                  <div class="mb-3">
+                    <input
+                      type="email"
+                      id="email"
+                      class="form-control"
+                      placeholder="Email Address"
+                      required
+                      {% if missing_keys %}disabled{% endif %}
+                    />
+                  </div>
+                  <!-- Password field -->
+                  <div class="mb-3">
+                    <input
+                      type="password"
+                      id="password"
+                      class="form-control"
+                      placeholder="Password"
+                      required
+                      {% if missing_keys %}disabled{% endif %}
+                    />
+                  </div>
+                  <div class="text-end mb-3">
+                    <a href="#" id="forgot-password-link" {% if missing_keys %}class="disabled"{% endif %}>Forgot password?</a>
+                  </div>
+                  <div class="text-center mt-4">
+                    <button
+                      type="submit"
+                      class="btn btn-primary shadow px-sm-4"
+                      {% if missing_keys %}disabled{% endif %}
+                    >Login</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Supabase authentication library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
+    {% if not missing_keys %}
+    <!-- Supabase configuration provided by the Flask view -->
+    <script>
+      const SUPABASE_URL = {{ supabase_config.url | tojson }};
+      const SUPABASE_ANON_KEY = {{ supabase_config.anonKey | tojson }};
+      const supabase = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+      );
+      const csrfToken = document
+        .querySelector('meta[name="csrf-token"]').getAttribute('content');
+      const form = document.getElementById('login-form');
+      const errorBox = document.getElementById('login-error');
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
+        try {
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email,
+            password
+          });
+          if (error) throw error;
+          const idToken = data.session.access_token;
+          console.log('Token:', idToken);
+          const resp = await fetch('/sessionLogin', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-CSRFToken': csrfToken
+            },
+            body: JSON.stringify({ idToken })
+          });
+          if (resp.status === 204) {
+            errorBox.classList.add('d-none');
+            window.location.href = '/dashboard';
+          } else {
+            console.error('Login failed with status', resp.status);
+            const message = await resp.text();
+            errorBox.textContent = message || 'Login failed. Please try again.';
+            errorBox.classList.remove('d-none');
+          }
+        } catch (err) {
+          console.error('Login error:', err);
+          errorBox.textContent = err.message || 'Login failed. Please try again.';
+          errorBox.classList.remove('d-none');
+        }
+      });
+
+      document
+        .getElementById('forgot-password-link')
+        .addEventListener('click', async (e) => {
+          e.preventDefault();
+          const email = document.getElementById('email').value;
+          if (!email) {
+            errorBox.textContent = 'Please enter your email address first.';
+            errorBox.classList.remove('d-none');
+            return;
+          }
+          try {
+            const { error } = await supabase.auth.resetPasswordForEmail(
+              email,
+              {
+                redirectTo: `${window.location.origin}/reset-password`,
+              }
+            );
+            if (error) throw error;
+            errorBox.textContent = 'Password reset email sent.';
+            errorBox.classList.remove('d-none');
+          } catch (err) {
+            console.error('Password reset error:', err);
+            errorBox.textContent = err.message || 'Could not send reset email. Please try again.';
+            errorBox.classList.remove('d-none');
+          }
+        });
+    </script>
+    {% else %}
+    <!-- Warning when Supabase configuration is missing -->
+    <script>
+      console.warn(
+        'Login is disabled: missing Supabase configuration keys: ' +
+          '{{ missing_keys | join(", ") }}'
+      );
+    </script>
+    {% endif %}
+    <!-- Core scripts for Bootstrap components and custom behavior -->
+    <script src="{{ url_for('static', filename='assets/js/vendor-all.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='assets/plugins/bootstrap/js/bootstrap.min.js') }}"></script>
+  </body>
+</html>

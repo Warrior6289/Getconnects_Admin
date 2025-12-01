@@ -1,0 +1,116 @@
+<!-- Sidebar navigation component shared across dashboard pages -->
+<!-- [ navigation menu ] start -->
+<nav class="pcoded-navbar">
+    <div class="navbar-wrapper">
+        <div class="navbar-brand header-logo">
+            <!-- Application logo -->
+            <a href="/" class="b-brand">
+                {% if config.LOGO_URL %}
+                <img src="{{ config.LOGO_URL }}" alt="logo" class="img-fluid"/>
+                {% else %}
+                <div class="b-bg">
+                    <i class="feather icon-trending-up"></i>
+                </div>
+                {% endif %}
+                <span class="b-title">Getconnects</span>
+            </a>
+            <a class="mobile-menu" id="mobile-collapse" href="javascript:"><span></span></a>
+        </div>
+        <div class="navbar-content scroll-div">
+            <!-- Main navigation links -->
+            <ul class="nav pcoded-inner-navbar">
+                <li class="nav-item pcoded-menu-caption">
+                    <label>Navigation</label>
+                </li>
+                {% if has_permission('/dashboard') %}
+                <li class="nav-item {% if request.path.startswith('/dashboard') %}active{% endif %}">
+                    <a href="/dashboard" class="nav-link">
+                        <span class="pcoded-micon"><i class="feather icon-home"></i></span>
+                        <span class="pcoded-mtext">Dashboard</span>
+                    </a>
+                </li>
+                {% endif %}
+                {% if has_permission('/clients') or has_permission('/campaigns') or has_permission('/lead-types') or has_permission('/leads') %}
+                <li class="nav-item pcoded-menu-caption">
+                    <label>Manage</label>
+                </li>
+                {% if has_permission('/clients') %}
+                <li class="nav-item {% if request.path.startswith('/clients') %}active{% endif %}">
+                    <a href="/clients" class="nav-link">
+                        <span class="pcoded-micon"><i class="feather icon-briefcase"></i></span>
+                        <span class="pcoded-mtext">Clients</span>
+                    </a>
+                </li>
+                {% endif %}
+                {% if has_permission('/campaigns') %}
+                <li class="nav-item {% if request.path.startswith('/campaigns') %}active{% endif %}">
+                    <a href="/campaigns" class="nav-link">
+                        <span class="pcoded-micon"><i class="feather icon-sliders"></i></span>
+                        <span class="pcoded-mtext">Campaigns</span>
+                    </a>
+                </li>
+                {% endif %}
+                {% if has_permission('/lead-types') %}
+                <li class="nav-item {% if request.path.startswith('/lead-types') %}active{% endif %}">
+                    <a href="/lead-types" class="nav-link">
+                        <span class="pcoded-micon"><i class="feather icon-list"></i></span>
+                        <span class="pcoded-mtext">Lead Types</span>
+                    </a>
+                </li>
+                {% endif %}
+                {% if has_permission('/leads') %}
+                <li class="nav-item {% if request.path.startswith('/leads') %}active{% endif %}">
+                    <a href="/leads" class="nav-link">
+                        <span class="pcoded-micon"><i class="feather icon-user"></i></span>
+                        <span class="pcoded-mtext">Leads</span>
+                    </a>
+                </li>
+                {% endif %}
+                {% endif %}
+                {% set show_settings = has_permission('/settings/justcall') or has_permission('/settings/users') or has_permission('/settings/gmail') or has_permission('/settings/notifications/test') or has_permission('/settings/templates') %}
+                {% if show_settings %}
+                <li class="nav-item pcoded-hasmenu {% if request.path.startswith('/settings') %}active pcoded-trigger{% endif %}">
+                    <a href="javascript:" class="nav-link">
+                        <span class="pcoded-micon"><i class="feather icon-settings"></i></span>
+                        <span class="pcoded-mtext">Settings</span>
+                    </a>
+                    <ul class="pcoded-submenu">
+                        {% if has_permission('/settings/justcall') %}
+                        <li class="{% if request.path.startswith('/settings/justcall') %}active{% endif %}">
+                            <a href="/settings/justcall" class="nav-link">JustCall API</a>
+                        </li>
+                        {% endif %}
+                        {% if has_permission('/settings/gmail') %}
+                        <li class="{% if request.path.startswith('/settings/gmail') %}active{% endif %}">
+                            <a href="/settings/gmail" class="nav-link">Gmail</a>
+                        </li>
+                        {% endif %}
+                        {% if has_permission('/settings/templates') %}
+                        <li class="{% if request.path.startswith('/settings/templates') %}active{% endif %}">
+                            <a href="/settings/templates" class="nav-link">Notification Templates</a>
+                        </li>
+                        {% endif %}
+                        {% if has_permission('/settings/notifications/test') %}
+                        <li class="{% if request.path.startswith('/settings/notifications/test') %}active{% endif %}">
+                            <a href="/settings/notifications/test" class="nav-link">Notification Test</a>
+                        </li>
+                        {% endif %}
+                        {% if has_permission('/settings/users') %}
+                        <li class="{% if request.path.startswith('/settings/users') %}active{% endif %}">
+                            <a href="/settings/users" class="nav-link">Staff Management</a>
+                        </li>
+                        {% endif %}
+                    </ul>
+                </li>
+                {% endif %}
+                <li class="nav-item">
+                    <a href="/logout" class="nav-link">
+                        <span class="pcoded-micon"><i class="feather icon-power"></i></span>
+                        <span class="pcoded-mtext">Logout</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<!-- [ navigation menu ] end -->

@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+{% block title %}Notification Templates - GetConnects Portal{% endblock %}
+{% block content %}
+<h1 class="mb-3">Notification Templates</h1>
+{% if not email_text_supported %}
+<div class="alert alert-warning">
+  Database migrations are required before notification templates can be modified. Please run the latest migrations to enable editing.
+</div>
+{% endif %}
+<div class="mb-3 text-muted">
+  <p class="mb-1">Lead placeholders:</p>
+  {% for p in lead_placeholders %}
+    <code>{{ '{' }}{{ p }}{{ '}' }}</code>{% if not loop.last %}, {% endif %}
+  {% endfor %}
+</div>
+<div class="mb-3 text-muted">
+  <p class="mb-1">Client placeholders:</p>
+  {% for p in client_placeholders %}
+    <code>{{ '{' }}{{ p }}{{ '}' }}</code>{% if not loop.last %}, {% endif %}
+  {% endfor %}
+</div>
+<form method="post" class="mb-4">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+  <input type="hidden" name="action" value="add">
+  <div class="mb-3">
+    <label class="form-label">Name</label>
+    <input class="form-control" type="text" name="name">
+  </div>
+  <div class="mb-3">
+    <label class="form-label">Channel</label>
+    <select class="form-select" name="channel">
+      <option value="both" selected>Both</option>
+      <option value="sms">SMS</option>
+      <option value="email">Email</option>
+    </select>
+  </div>
+  <div id="sms_fields" class="mb-3">
+    <label class="form-label">SMS Template</label>
+    <textarea class="form-control" name="sms_template"></textarea>
+  </div>
+    <div id="email_fields">
+      <div class="mb-3">
+        <label class="form-label">Email Subject</label>
+        <input class="form-control" type="text" name="email_subject">
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Email Text</label>
+        <textarea class="form-control" name="email_text"></textarea>
+      </div>
+      <div class="mb-3">
+        <label class="form-label">Email HTML</label>
+        <textarea class="form-control" name="email_html"></textarea>
+      </div>
+    </div>
+  <div class="form-check mb-3">
+    <input class="form-check-input" type="checkbox" name="is_default" id="is_default">
+    <label class="form-check-label" for="is_default">Default</label>
+  </div>
+  <button class="btn btn-primary" {% if not email_text_supported %}disabled{% endif %}>Save</button>
+</form>
+{% if templates %}
+<table class="table table-sm">
+  <thead>
+    <tr><th>Name</th><th>Default</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+    {% for tmpl in templates %}
+    <tr>
+      <td>{{ tmpl.name }}</td>
+      <td>{% if tmpl.is_default %}Yes{% else %}No{% endif %}</td>
+      <td>
+        <a href="{{ url_for('settings.edit_notification_template', template_id=tmpl.id) }}" class="btn btn-link p-0 me-2 {% if not email_text_supported %}disabled text-muted{% endif %}" {% if not email_text_supported %}aria-disabled="true" tabindex="-1"{% endif %}>Edit</a>
+        {% if email_text_supported %}
+        <form method="post" style="display:inline;">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="action" value="set_default">
+          <input type="hidden" name="template_id" value="{{ tmpl.id }}">
+          <button class="btn btn-link p-0">Set Default</button>
+        </form>
+        <form method="post" style="display:inline;" onsubmit="return confirm('Delete template?');">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+          <input type="hidden" name="action" value="delete">
+          <input type="hidden" name="template_id" value="{{ tmpl.id }}">
+          <button class="btn btn-link p-0 text-danger">Delete</button>
+        </form>
+        {% endif %}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% if not email_text_supported %}
+<p class="text-muted">Editing, deleting, or changing default templates is disabled until the database migrations are completed.</p>
+{% endif %}
+{% else %}
+<p class="text-muted">No templates configured.</p>
+{% endif %}
+<script>
+function toggleChannelFields() {
+  const channel = document.querySelector('select[name="channel"]').value;
+  document.getElementById('sms_fields').style.display = (channel === 'email') ? 'none' : 'block';
+  document.getElementById('email_fields').style.display = (channel === 'sms') ? 'none' : 'block';
+}
+document.addEventListener('DOMContentLoaded', function() {
+  const sel = document.querySelector('select[name="channel"]');
+  sel.addEventListener('change', toggleChannelFields);
+  toggleChannelFields();
+});
+</script>
+{% endblock %}

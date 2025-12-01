@@ -1,0 +1,127 @@
+<!-- Navigation bar component. Included on authenticated pages to provide
+     quick access to primary actions. -->
+<!-- [ Header ] start -->
+<header class="navbar pcoded-header navbar-expand-lg navbar-light">
+    <!-- Brand / logo section -->
+    <div class="m-header">
+        <a class="mobile-menu" id="mobile-collapse1" href="javascript:"><span></span></a>
+        <a href="/" class="b-brand">
+            {% if config.LOGO_URL %}
+            <img src="{{ config.LOGO_URL }}" alt="logo" class="img-fluid"/>
+            {% else %}
+            <div class="b-bg">
+                <i class="feather icon-trending-up"></i>
+            </div>
+            {% endif %}
+            <span class="b-title">Getconnects</span>
+        </a>
+    </div>
+    <a class="mobile-menu" id="mobile-header" href="javascript:">
+        <i class="feather icon-more-horizontal"></i>
+    </a>
+    <div class="collapse navbar-collapse">
+        <!-- Left side actions: fullscreen toggle, example dropdown and search -->
+        <ul class="navbar-nav mr-auto">
+            <li><a href="javascript:" class="full-screen" onclick="javascript:toggleFullScreen()"><i
+                    class="feather icon-maximize"></i></a></li>
+            <li class="nav-item dropdown">
+                <a class="dropdown-toggle" href="javascript:" data-toggle="dropdown">Dropdown</a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="javascript:">Action</a></li>
+                    <li><a class="dropdown-item" href="javascript:">Another action</a></li>
+                    <li><a class="dropdown-item" href="javascript:">Something else here</a></li>
+                </ul>
+            </li>
+            <li class="nav-item">
+                <div class="main-search">
+                    <div class="input-group">
+                        <input type="text" id="m-search" class="form-control" placeholder="Search . . .">
+                        <a href="javascript:" class="input-group-append search-close">
+                            <i class="feather icon-x input-group-text"></i>
+                        </a>
+                        <span class="input-group-append search-btn btn btn-primary">
+                                <i class="feather icon-search input-group-text"></i>
+                            </span>
+                    </div>
+                </div>
+            </li>
+        </ul>
+        <!-- Right side icons: theme switcher, notifications and user menu -->
+        <ul class="navbar-nav ml-auto">
+            <li>
+                <label>
+                    <i class="icon feather icon-sun" id="theme-indicator"></i>
+                    <input type="checkbox" id="theme-switch" class="d-none">
+                </label>
+            </li>
+            <li>
+                <div class="dropdown">
+                    <a class="dropdown-toggle" href="javascript:" data-toggle="dropdown"><i
+                            class="icon feather icon-bell"></i></a>
+                    <div class="dropdown-menu dropdown-menu-right notification">
+                        <div class="noti-head">
+                            <h6 class="d-inline-block m-b-0">Notifications</h6>
+                        </div>
+                        <ul class="noti-body" id="notificationList">
+                            <li class="notification"><div class="media"><div class="media-body"><p>No notifications</p></div></div></li>
+                        </ul>
+                        <div class="noti-footer">
+                            <a href="/notifications/all">Show all</a>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li>
+                <div class="dropdown drp-user">
+                    <a href="javascript:" class="dropdown-toggle" data-toggle="dropdown">
+                        <i class="icon feather icon-settings"></i>
+                    </a>
+                    <div class="dropdown-menu dropdown-menu-right profile-notification">
+                        <div class="pro-head">
+                            <img src="{{ url_for('static', filename='assets/images/user/avatar-1.jpg') }}" class="img-radius" alt="User-Profile-Image">
+                            <span>
+                                {{ session.get('user', '') }}
+                            </span>
+                            <a href="/auth-signin.html" class="dud-logout" title="Logout">
+                                <i class="feather icon-log-out"></i>
+                            </a>
+                        </div>
+                        <ul class="pro-body">
+                            <li><a href="/settings/profile" class="dropdown-item"><i class="feather icon-user"></i>
+                                Profile</a></li>
+                            {% if has_permission('/settings/users') %}
+                            <li><a href="/settings/users" class="dropdown-item"><i class="feather icon-settings"></i>
+                                Settings</a></li>
+                            {% endif %}
+                            <li><a href="/logout" class="dropdown-item">
+                                <i class="feather icon-lock"></i> Logout</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </li>
+        </ul>
+    </div>
+</header>
+<!-- [ Header ] end -->
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  try {
+    const res = await fetch('/notifications?limit=5');
+    const logs = await res.json();
+    const list = document.getElementById('notificationList');
+    if (!list) return;
+    list.innerHTML = '';
+    if (logs.length === 0) {
+      list.innerHTML = '<li class="notification"><div class="media"><div class="media-body"><p>No notifications</p></div></div></li>';
+      return;
+    }
+    logs.forEach(log => {
+      const item = `<li class="notification"><div class="media"><div class="media-body"><p><a href="/notifications/${log.id}">${log.channel.toUpperCase()} - ${log.status}</a></p><p>${log.message}</p><small>Lead: ${log.lead_name || 'N/A'} | Client: ${log.client_name || 'N/A'}</small></div></div></li>`;
+      list.insertAdjacentHTML('beforeend', item);
+    });
+  } catch (err) {
+    console.error('Failed to load notifications', err);
+  }
+});
+</script>

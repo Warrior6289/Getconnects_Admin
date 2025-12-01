@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block title %}Report Options{% endblock %}
+{% block content %}
+<h3>Select Columns for Report</h3>
+<form method="get" action="{{ url_for('pages.leads_report') }}">
+  {% for key, label in columns %}
+  <div class="form-check">
+    <input class="form-check-input" type="checkbox" name="columns" value="{{ key }}" id="col-{{ key }}" checked>
+    <label class="form-check-label" for="col-{{ key }}">{{ label }}</label>
+  </div>
+  {% endfor %}
+  {% for name, value in filters.items() %}
+    <input type="hidden" name="{{ name }}" value="{{ value }}">
+  {% endfor %}
+  <button type="submit" class="btn btn-primary mt-3">Download CSV</button>
+</form>
+{% endblock %}

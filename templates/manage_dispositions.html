@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block title %}Manage Dispositions - GetConnects Portal{% endblock %}
+{% block content %}
+<h1 class="mb-3">Manage Dispositions for {{ group.name }}</h1>
+<h5>Existing Dispositions</h5>
+<ul class="list-group mb-4">
+  {% for lt in group.lead_types %}
+  <li class="list-group-item d-flex justify-content-between align-items-center">
+    {{ lt.name }}
+    <form method="post" class="mb-0">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+      <input type="hidden" name="delete_id" value="{{ lt.id }}">
+      <button class="btn btn-sm btn-danger">Delete</button>
+    </form>
+  </li>
+  {% else %}
+  <li class="list-group-item text-muted">No dispositions.</li>
+  {% endfor %}
+</ul>
+
+<h5>Add Dispositions</h5>
+<form method="post">
+  <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+  <div id="disposition-fields">
+    <div class="input-group mb-3">
+      <input type="text" name="dispositions" class="form-control" placeholder="Disposition(s) (comma-separated)">
+    </div>
+  </div>
+  <small class="form-text text-muted mb-2">Separate multiple dispositions with commas or add additional fields.</small>
+  <button type="button" class="btn btn-outline-secondary mb-3" id="add-field">Add another</button>
+  <div>
+    <button class="btn btn-primary">Save</button>
+    <a href="{{ url_for('pages.lead_types_page') }}" class="btn btn-link">Back</a>
+  </div>
+</form>
+{% endblock %}
+{% block javascripts %}
+{{ super() }}
+<script>
+  document.getElementById('add-field').addEventListener('click', function() {
+    var container = document.getElementById('disposition-fields');
+    var div = document.createElement('div');
+    div.className = 'mb-3';
+    div.innerHTML = '<input type="text" name="dispositions" class="form-control" placeholder="Disposition(s) (comma-separated)">';
+    container.appendChild(div);
+  });
+</script>
+{% endblock %}

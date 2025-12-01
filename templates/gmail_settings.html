@@ -1,0 +1,126 @@
+{% extends 'base.html' %}
+{% block title %}Gmail Settings - GetConnects Portal{% endblock %}
+{% block content %}
+<div class="row">
+  <div class="col-lg-8 mx-auto">
+    <div class="card">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Gmail API OAuth</h5>
+        {% if api_status %}
+        <span class="badge badge-{{ 'success' if api_status.connected else 'warning' }}">
+          {{ 'Connected' if api_status.connected else 'Needs attention' }}
+        </span>
+        {% else %}
+        <span class="badge badge-secondary">Not configured</span>
+        {% endif %}
+      </div>
+      <div class="card-block">
+        {% if api_status %}
+        <div class="alert alert-{{ 'success' if api_status.connected else 'warning' }}" role="alert">
+          {{ api_status.message }}
+        </div>
+        {% else %}
+        <div class="alert alert-secondary" role="alert">
+          Gmail API credentials have not been configured yet.
+        </div>
+        {% endif %}
+        <p class="text-muted">
+          Provide the OAuth client details from the Google Cloud Console. The values saved here
+          are stored encrypted and used to refresh an access token automatically.
+        </p>
+        <ol class="text-muted small">
+          <li>Create an OAuth 2.0 client in Google Cloud with Gmail API access.</li>
+          <li>Generate a refresh token for the Gmail account you want to send from.</li>
+          <li>Paste the client ID, secret, refresh token, and sending email below.</li>
+        </ol>
+        <form method="post" class="mb-3">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <input type="hidden" name="action" value="save_api" />
+          <div class="form-group">
+            <label for="api_client_id">Client ID</label>
+            <input
+              type="text"
+              id="api_client_id"
+              name="api_client_id"
+              class="form-control"
+              placeholder="OAuth client ID"
+              value="{{ credentials.api_client_id if credentials and credentials.api_client_id else '' }}"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="api_client_secret">Client Secret</label>
+            <input
+              type="password"
+              id="api_client_secret"
+              name="api_client_secret"
+              class="form-control"
+              placeholder="OAuth client secret"
+              required
+            />
+            {% if credentials and credentials.api_client_secret %}
+            <small class="form-text text-muted">Re-enter the secret to update the saved value.</small>
+            {% endif %}
+          </div>
+          <div class="form-group">
+            <label for="api_refresh_token">Refresh Token</label>
+            <input
+              type="password"
+              id="api_refresh_token"
+              name="api_refresh_token"
+              class="form-control"
+              placeholder="OAuth refresh token"
+              required
+            />
+            {% if credentials and credentials.api_refresh_token %}
+            <small class="form-text text-muted">Provide the refresh token again to replace the stored value.</small>
+            {% endif %}
+          </div>
+          <div class="form-group">
+            <label for="api_from_email">Sending Email</label>
+            <input
+              type="email"
+              id="api_from_email"
+              name="api_from_email"
+              class="form-control"
+              placeholder="user@domain.com"
+              value="{{ credentials.api_from_email if credentials and credentials.api_from_email else (credentials.from_email if credentials and credentials.from_email else '') }}"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="cc_emails">CC Emails</label>
+            <input
+              type="text"
+              id="cc_emails"
+              name="cc_emails"
+              class="form-control"
+              placeholder="Optional: comma separated email addresses"
+              value="{{ credentials.cc_emails if credentials and credentials.cc_emails else '' }}"
+            />
+          </div>
+          <div class="form-group">
+            <label for="bcc_emails">BCC Emails</label>
+            <input
+              type="text"
+              id="bcc_emails"
+              name="bcc_emails"
+              class="form-control"
+              placeholder="Optional: comma separated email addresses"
+              value="{{ credentials.bcc_emails if credentials and credentials.bcc_emails else '' }}"
+            />
+          </div>
+          <button class="btn btn-primary" type="submit">Save API Credentials</button>
+        </form>
+        {% if credentials and credentials.api_client_id %}
+        <form method="post" class="text-right">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+          <input type="hidden" name="action" value="delete_api" />
+          <button class="btn btn-outline-danger" type="submit">Remove API Credentials</button>
+        </form>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
