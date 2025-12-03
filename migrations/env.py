@@ -1,4 +1,5 @@
 from logging.config import fileConfig
+from configparser import ConfigParser
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
@@ -12,6 +13,13 @@ from getconnects_admin.models import Base, DATABASE_URL
 # this is the Alembic Config object, which provides
 # access to the values within the .ini file in use.
 config = context.config
+
+# Disable interpolation to prevent ConfigParser from interpreting % characters
+# in DATABASE_URL (which may contain URL-encoded characters like %24, %3D, etc.)
+# This is necessary because Supabase connection strings contain URL-encoded characters
+if hasattr(config, 'file_config') and isinstance(config.file_config, ConfigParser):
+    # Disable interpolation by setting it to None
+    config.file_config._interpolation = None
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
