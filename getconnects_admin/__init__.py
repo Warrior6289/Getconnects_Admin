@@ -7,7 +7,6 @@ from flask_caching import Cache
 import click
 
 from .models import Base, SessionLocal, engine
-from .db_bootstrap import ensure_lead_type_tables
 from .models.user import User
 from .models.client import Client
 from .models.campaign import Campaign
@@ -67,7 +66,6 @@ def create_app(config_name: str | None = None) -> Flask:
     csrf.init_app(app)
     cache.init_app(app, config={"CACHE_TYPE": "simple"})
     db.init_app(app)
-    ensure_lead_type_tables(engine)
 
     @app.context_processor
     def inject_permissions():

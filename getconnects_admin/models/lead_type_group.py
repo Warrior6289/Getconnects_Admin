@@ -9,7 +9,7 @@ from . import Base
 class LeadTypeGroup(Base):
     """A collection of lead types provided by JustCall."""
 
-    __tablename__ = "disposition_groups"
+    __tablename__ = "lead_type_groups"
 
     id = Column(String, primary_key=True)
     name = Column(String, nullable=False)

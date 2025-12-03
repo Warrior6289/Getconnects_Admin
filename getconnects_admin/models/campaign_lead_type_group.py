@@ -9,13 +9,12 @@ from . import Base
 class CampaignLeadTypeGroup(Base):
     """Mapping between a campaign and a lead type group."""
 
-    __tablename__ = "campaign_disposition_groups"
+    __tablename__ = "campaign_lead_type_groups"
 
     campaign_id = Column(String, ForeignKey("campaigns.id"), primary_key=True)
     lead_type_group_id = Column(
-        "disposition_group_id",
         String,
-        ForeignKey("disposition_groups.id"),
+        ForeignKey("lead_type_groups.id"),
         primary_key=True,
     )
 

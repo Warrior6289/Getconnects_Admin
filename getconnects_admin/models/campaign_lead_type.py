@@ -9,16 +9,15 @@ from . import Base
 class CampaignLeadType(Base):
     """Mapping between a campaign and its lead types."""
 
-    __tablename__ = "campaign_dispositions"
+    __tablename__ = "campaign_lead_types"
 
     campaign_id = Column(String, ForeignKey("campaigns.id"), primary_key=True)
     lead_type_id = Column(
-        "disposition_id",
         String,
         ForeignKey("lead_types.id"),
         primary_key=True,
     )
-    lead_type_name = Column("disposition_name", String)
+    lead_type_name = Column(String)
     sms_enabled = Column(Boolean)
     email_enabled = Column(Boolean)
 

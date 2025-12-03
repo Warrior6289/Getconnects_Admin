@@ -13,7 +13,7 @@ class LeadType(Base):
 
     id = Column(String, primary_key=True)
     name = Column(String, nullable=False)
-    group_id = Column(String, ForeignKey("disposition_groups.id"))
+    group_id = Column(String, ForeignKey("lead_type_groups.id"))
 
     group = relationship("LeadTypeGroup", back_populates="lead_types")
 

@@ -18,7 +18,7 @@ class Lead(Base):
     email = Column(String)
     company = Column(String)
     secondary_phone = Column(String)
-    lead_type = Column("disposition", String)
+    lead_type = Column(String)
     caller_name = Column(String)
     caller_number = Column(String)
     notes = Column(String)
