@@ -10,17 +10,15 @@ depends_on = None
 
 
 def upgrade():
+    # Add column with server_default
     op.add_column(
         "justcall_webhooks",
         sa.Column("target_type", sa.String(), nullable=False, server_default="lead"),
     )
-    with op.batch_alter_table("justcall_webhooks", recreate="always") as batch_op:
-        batch_op.alter_column(
-            "target_type",
-            existing_type=sa.String(),
-            server_default=None,
-            existing_server_default=sa.text("'lead'"),
-        )
+    
+    # Remove server_default using direct SQL to avoid table recreation
+    # This avoids the foreign key dependency issue
+    op.execute("ALTER TABLE justcall_webhooks ALTER COLUMN target_type DROP DEFAULT")
 
 
 def downgrade():
