@@ -11,6 +11,20 @@ branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
+def _get_table_name() -> str:
+    """Determine the correct table name (may have been renamed by c1d8bd0c476f)."""
+    bind = op.get_bind()
+    inspector = sa.inspect(bind)
+    tables = {name.lower() for name in inspector.get_table_names(schema="public")}
+    
+    if "client_lead_type_settings" in tables:
+        return "client_lead_type_settings"
+    elif "client_dispositions" in tables:
+        return "client_dispositions"
+    else:
+        raise RuntimeError("Neither client_dispositions nor client_lead_type_settings table found")
+
+
 def upgrade() -> None:
     op.create_table(
         "notification_templates",
@@ -21,13 +35,19 @@ def upgrade() -> None:
         sa.Column("email_html", sa.Text(), nullable=True),
         sa.Column("is_default", sa.Boolean(), nullable=False, server_default=sa.false()),
     )
+    
+    table_name = _get_table_name()
+    
     op.add_column(
-        "client_dispositions",
+        table_name,
         sa.Column("template_id", sa.Integer(), nullable=True),
     )
+    
+    # Use appropriate constraint name based on table name
+    constraint_name = f"{table_name}_template_id_fkey"
     op.create_foreign_key(
-        "client_dispositions_template_id_fkey",
-        "client_dispositions",
+        constraint_name,
+        table_name,
         "notification_templates",
         ["template_id"],
         ["id"],
@@ -35,8 +55,11 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
+    table_name = _get_table_name()
+    constraint_name = f"{table_name}_template_id_fkey"
+    
     op.drop_constraint(
-        "client_dispositions_template_id_fkey", "client_dispositions", type_="foreignkey"
+        constraint_name, table_name, type_="foreignkey"
     )
-    op.drop_column("client_dispositions", "template_id")
+    op.drop_column(table_name, "template_id")
     op.drop_table("notification_templates")
