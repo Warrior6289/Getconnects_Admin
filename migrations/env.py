@@ -1,5 +1,5 @@
 from logging.config import fileConfig
-from configparser import ConfigParser
+from configparser import ConfigParser, Interpolation
 
 from sqlalchemy import engine_from_config
 from sqlalchemy import pool
@@ -17,9 +17,19 @@ config = context.config
 # Disable interpolation to prevent ConfigParser from interpreting % characters
 # in DATABASE_URL (which may contain URL-encoded characters like %24, %3D, etc.)
 # This is necessary because Supabase connection strings contain URL-encoded characters
+# We use a no-op interpolation class that doesn't perform any interpolation
+class NoInterpolation(Interpolation):
+    """A no-op interpolation class that doesn't perform any interpolation."""
+    def before_get(self, parser, section, option, value, defaults):
+        return value
+    def before_set(self, parser, section, option, value):
+        return value
+    def before_read(self, parser, section, option, value):
+        return value
+
 if hasattr(config, 'file_config') and isinstance(config.file_config, ConfigParser):
-    # Disable interpolation by setting it to None
-    config.file_config._interpolation = None
+    # Replace interpolation with a no-op class
+    config.file_config._interpolation = NoInterpolation()
 
 # Interpret the config file for Python logging.
 # This line sets up loggers basically.
