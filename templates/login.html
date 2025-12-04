@@ -86,11 +86,11 @@
     </div>
     <!-- Supabase authentication library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    {% if not missing_keys and supabase_config.url and supabase_config.anonKey %}
+    {% if not missing_keys and supabase_config.get('url') and supabase_config.get('anonKey') %}
     <!-- Supabase configuration provided by the Flask view -->
     <script>
-      const SUPABASE_URL = {{ supabase_config.url | tojson }};
-      const SUPABASE_ANON_KEY = {{ supabase_config.anonKey | tojson }};
+      const SUPABASE_URL = {{ supabase_config.get('url', '') | tojson }};
+      const SUPABASE_ANON_KEY = {{ supabase_config.get('anonKey', '') | tojson }};
       const supabase = window.supabase.createClient(
         SUPABASE_URL,
         SUPABASE_ANON_KEY
