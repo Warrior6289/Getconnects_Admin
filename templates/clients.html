@@ -72,19 +72,7 @@
         </tr>
       </thead>
       <tbody id="clientRows">
-        {% for client in clients %}
-        <tr>
-          <td>{{ client.id }}</td>
-          <td>{{ client.company_name }}</td>
-          <td>{{ client.contact_name }}</td>
-          <td>{{ client.contact_email }}</td>
-          <td>{{ client.phone }}</td>
-          <td>{{ client.created_at }}</td>
-          <td>
-            <a class="btn btn-sm btn-primary" href="/clients/{{ client.id }}/manage">Manage</a>
-          </td>
-        </tr>
-        {% endfor %}
+        {# Server-side rendered rows will be replaced by JavaScript #}
       </tbody>
     </table>
     <div id="loading" class="text-center p-4 d-none">Loading...</div>
@@ -133,35 +121,118 @@
   <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
   <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
   <script>
-    async function loadClients() {
-      const loader = document.getElementById('loading');
-      loader.classList.remove('d-none');
-      const res = await fetch('/api/clients');
-      const data = await res.json();
-      const tbody = document.getElementById('clientRows');
-      tbody.innerHTML = '';
-      data.forEach(c => {
-        const row = `<tr>
-          <td>${c.id}</td>
-          <td>${c.company_name}</td>
-          <td>${c.contact_name}</td>
-          <td>${c.contact_email}</td>
-          <td>${c.phone}</td>
-          <td>${c.created_at || ''}</td>
-          <td><a class='btn btn-sm btn-primary' href='/clients/${c.id}/manage'>Manage</a></td>
-        </tr>`;
-        tbody.insertAdjacentHTML('beforeend', row);
-      });
-      if (data.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="7">No clients</td></tr>';
+    // Format datetime for display
+    function formatDate(dateString) {
+      if (!dateString) return '';
+      try {
+        const date = new Date(dateString);
+        if (isNaN(date.getTime())) return dateString;
+        return date.toLocaleString('en-US', {
+          year: 'numeric',
+          month: 'short',
+          day: 'numeric',
+          hour: '2-digit',
+          minute: '2-digit'
+        });
+      } catch (e) {
+        return dateString;
       }
-      loader.classList.add('d-none');
     }
 
+    async function loadClients() {
+      const loader = document.getElementById('loading');
+      const tbody = document.getElementById('clientRows');
+      
+      // Clear any existing rows first
+      tbody.innerHTML = '';
+      loader.classList.remove('d-none');
+      
+      try {
+        const res = await fetch('/api/clients');
+        if (!res.ok) {
+          throw new Error('Failed to load clients');
+        }
+        const data = await res.json();
+        
+        // Ensure we always create exactly 7 columns to match the header
+        data.forEach(c => {
+          const row = document.createElement('tr');
+          
+          // Create cells with proper text content to avoid XSS
+          const cells = [
+            document.createElement('td'),
+            document.createElement('td'),
+            document.createElement('td'),
+            document.createElement('td'),
+            document.createElement('td'),
+            document.createElement('td'),
+            document.createElement('td')
+          ];
+          
+          cells[0].textContent = c.id || '';
+          cells[1].textContent = c.company_name || '';
+          cells[2].textContent = c.contact_name || '';
+          cells[3].textContent = c.contact_email || '';
+          cells[4].textContent = c.phone || '';
+          cells[5].textContent = formatDate(c.created_at);
+          
+          // Manage button with proper HTML
+          const manageLink = document.createElement('a');
+          manageLink.className = 'btn btn-sm btn-primary';
+          manageLink.href = `/clients/${c.id || ''}/manage`;
+          manageLink.textContent = 'Manage';
+          cells[6].appendChild(manageLink);
+          
+          cells.forEach(cell => row.appendChild(cell));
+          tbody.appendChild(row);
+        });
+        
+        if (data.length === 0) {
+          const emptyRow = document.createElement('tr');
+          const emptyCell = document.createElement('td');
+          emptyCell.colSpan = 7;
+          emptyCell.className = 'text-center';
+          emptyCell.textContent = 'No clients found';
+          emptyRow.appendChild(emptyCell);
+          tbody.appendChild(emptyRow);
+        }
+      } catch (error) {
+        console.error('Error loading clients:', error);
+        const errorRow = document.createElement('tr');
+        const errorCell = document.createElement('td');
+        errorCell.colSpan = 7;
+        errorCell.className = 'text-center text-danger';
+        errorCell.textContent = 'Error loading clients. Please refresh the page.';
+        errorRow.appendChild(errorCell);
+        tbody.appendChild(errorRow);
+      } finally {
+        loader.classList.add('d-none');
+      }
+    }
+
+    let dataTableInstance = null;
+
     document.addEventListener('DOMContentLoaded', async () => {
+      // Clear any server-side rendered rows immediately
+      const tbody = document.getElementById('clientRows');
+      tbody.innerHTML = '';
+      
+      // Load clients data first
       await loadClients();
-      $('#clientsTable').DataTable();
-      // customize search input
+      
+      // Initialize DataTables only after data is loaded
+      // Destroy existing instance if any (for page refreshes)
+      if (dataTableInstance) {
+        dataTableInstance.destroy();
+      }
+      
+      dataTableInstance = $('#clientsTable').DataTable({
+        order: [[0, 'desc']], // Sort by ID descending
+        pageLength: 10,
+        responsive: true
+      });
+      
+      // Customize search input
       const searchInput = document.querySelector('#clientsTable_filter input');
       if (searchInput) {
         searchInput.placeholder = 'Search clients…';

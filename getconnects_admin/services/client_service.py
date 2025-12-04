@@ -1,5 +1,6 @@
 """Business logic for client operations."""
 
+from datetime import datetime
 from flask import current_app, flash
 
 try:
@@ -15,6 +16,14 @@ def list_clients() -> list[dict]:
     with get_session() as session:
         results = []
         for c in session.query(Client).all():
+            # Format created_at as ISO string, or empty string if None
+            created_at_str = ""
+            if c.created_at:
+                if isinstance(c.created_at, datetime):
+                    created_at_str = c.created_at.isoformat()
+                else:
+                    created_at_str = str(c.created_at)
+            
             results.append(
                 {
                     "id": c.id,
@@ -22,7 +31,7 @@ def list_clients() -> list[dict]:
                     "contact_name": c.contact_name,
                     "contact_email": c.contact_email,
                     "phone": c.phone,
-                    "created_at": c.created_at,
+                    "created_at": created_at_str,
                 }
             )
         return results
