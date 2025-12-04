@@ -10,6 +10,7 @@ from flask import (
     flash,
     current_app,
     make_response,
+    jsonify,
 )
 
 from ..models.campaign import Campaign
@@ -30,6 +31,8 @@ from ..services.lead_service import (
     list_leads_paginated,
     update_lead,
 )
+from ..services.client_service import list_clients
+from ..services.campaign_service import list_campaigns
 import csv
 import io
 import re
@@ -531,6 +534,64 @@ def leads_report():
     response.headers["Content-Type"] = "text/csv"
     response.headers["Content-Disposition"] = "attachment; filename=leads_report.csv"
     return response
+
+
+@pages_bp.route("/api/search", methods=["GET"])
+@require_page
+def search():
+    """Search across clients, campaigns, and leads."""
+    query = request.args.get("q", "").strip()
+    if not query or len(query) < 2:
+        return jsonify({"results": []})
+    
+    results = []
+    query_lower = query.lower()
+    
+    # Search clients
+    clients = list_clients()
+    for client in clients:
+        if (query_lower in client.get("company_name", "").lower() or
+            query_lower in client.get("contact_name", "").lower() or
+            query_lower in client.get("contact_email", "").lower() or
+            query_lower in client.get("phone", "").lower()):
+            results.append({
+                "type": "client",
+                "id": client["id"],
+                "title": client["company_name"],
+                "subtitle": f"{client.get('contact_name', '')} - {client.get('contact_email', '')}",
+                "url": f"/clients/{client['id']}/manage"
+            })
+    
+    # Search campaigns
+    campaigns = list_campaigns()
+    for campaign in campaigns:
+        if (query_lower in campaign.get("campaign_name", "").lower() or
+            query_lower in (campaign.get("client_name", "") or "").lower()):
+            results.append({
+                "type": "campaign",
+                "id": campaign["id"],
+                "title": campaign["campaign_name"],
+                "subtitle": f"Client: {campaign.get('client_name', 'N/A')}",
+                "url": f"/campaigns/{campaign['id']}/manage"
+            })
+    
+    # Search leads
+    leads = list_leads()
+    for lead in leads:
+        if (query_lower in (lead.get("name", "") or "").lower() or
+            query_lower in (lead.get("email", "") or "").lower() or
+            query_lower in (lead.get("phone", "") or "").lower() or
+            query_lower in (lead.get("company", "") or "").lower()):
+            results.append({
+                "type": "lead",
+                "id": lead["id"],
+                "title": lead.get("name", "Unnamed Lead"),
+                "subtitle": f"{lead.get('email', '')} - {lead.get('phone', '')}",
+                "url": f"/leads"
+            })
+    
+    # Limit results to 10
+    return jsonify({"results": results[:10]})
 
 
 @pages_bp.route("/settings/justcall")
