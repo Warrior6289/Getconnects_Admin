@@ -2065,6 +2065,39 @@ p.text-muted {
   overflow-y: auto;
   overflow-x: hidden;
 }
+
+/* Custom scrollbar styling for sidebar - Modern Design */
+.pcoded-navbar .scroll-div.navbar-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.pcoded-navbar .scroll-div.navbar-content::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 10px;
+  margin: 8px 0;
+}
+
+.pcoded-navbar .scroll-div.navbar-content::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(29, 233, 182, 0.6) 0%, rgba(29, 196, 233, 0.6) 100%);
+  border-radius: 10px;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.pcoded-navbar .scroll-div.navbar-content::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, rgba(29, 233, 182, 0.9) 0%, rgba(29, 196, 233, 0.9) 100%);
+  box-shadow: 0 0 8px rgba(29, 233, 182, 0.4);
+}
+
+.pcoded-navbar .scroll-div.navbar-content::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(180deg, rgba(29, 233, 182, 1) 0%, rgba(29, 196, 233, 1) 100%);
+}
+
+/* Firefox scrollbar styling */
+.pcoded-navbar .scroll-div.navbar-content {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(29, 233, 182, 0.6) transparent;
+}
 .pcoded-navbar .header-logo {
   position: relative;
   -webkit-box-align: center;
