@@ -1693,6 +1693,13 @@ p.text-muted {
 .pcoded-header .m-header .logo-thumb {
   display: none;
 }
+.pcoded-header .m-header .b-brand img {
+  max-width: 150px;
+  max-height: 40px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
 .pcoded-header .input-group {
   background: transparent;
 }
@@ -2099,6 +2106,13 @@ p.text-muted {
 .pcoded-navbar .header-logo .logo-dark {
   display: none;
 }
+.pcoded-navbar .header-logo img {
+  max-width: 224px;
+  max-height: 50px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
 .pcoded-navbar .header-logo .logo-thumb {
   -webkit-transform: rotateY(-90deg);
           transform: rotateY(-90deg);
@@ -2309,6 +2323,8 @@ p.text-muted {
   opacity: 0;
   -webkit-transition: unset;
   transition: unset;
+  max-width: 40px;
+  max-height: 40px;
 }
 .pcoded-navbar.navbar-collapsed .header-logo .logo-thumb {
   -webkit-transform: rotateY(0deg);
@@ -2421,6 +2437,8 @@ p.text-muted {
   -webkit-transform: rotateY(0deg);
           transform: rotateY(0deg);
   opacity: 1;
+  max-width: 224px;
+  max-height: 50px;
 }
 .pcoded-navbar.navbar-collapsed:hover .header-logo .logo-thumb {
   -webkit-transform: rotateY(-90deg);
@@ -7550,6 +7568,15 @@ table.footable-paging-center > tfoot > tr.footable-paging > td {
             transform: rotate(360deg) translate(-10px) rotate(-360deg);
   }
 }
+/* Logo sizing for auth pages */
+.auth-wrapper .card-body img[alt="logo"] {
+  max-width: 200px;
+  max-height: 80px;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+}
+
 @keyframes floating {
   from {
     -webkit-transform: rotate(0deg) translate(-10px) rotate(0deg);
