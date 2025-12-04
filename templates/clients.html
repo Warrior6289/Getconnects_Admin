@@ -157,8 +157,9 @@
         // Ensure we always create exactly 7 columns to match the header
         data.forEach(c => {
           const row = document.createElement('tr');
-          
-          // Create cells with proper text content to avoid XSS
+
+          // Create exactly 7 cells with text content (no colspan) to keep
+          // DataTables happy and avoid tn/18 \"Incorrect column count\".
           const cells = [
             document.createElement('td'),
             document.createElement('td'),
@@ -166,45 +167,58 @@
             document.createElement('td'),
             document.createElement('td'),
             document.createElement('td'),
-            document.createElement('td')
+            document.createElement('td'),
           ];
-          
+
           cells[0].textContent = c.id || '';
           cells[1].textContent = c.company_name || '';
           cells[2].textContent = c.contact_name || '';
           cells[3].textContent = c.contact_email || '';
           cells[4].textContent = c.phone || '';
           cells[5].textContent = formatDate(c.created_at);
-          
+
           // Manage button with proper HTML
           const manageLink = document.createElement('a');
           manageLink.className = 'btn btn-sm btn-primary';
           manageLink.href = `/clients/${c.id || ''}/manage`;
           manageLink.textContent = 'Manage';
           cells[6].appendChild(manageLink);
-          
-          cells.forEach(cell => row.appendChild(cell));
+
+          cells.forEach((cell) => row.appendChild(cell));
           tbody.appendChild(row);
         });
-        
+
         if (data.length === 0) {
-          const emptyRow = document.createElement('tr');
-          const emptyCell = document.createElement('td');
-          emptyCell.colSpan = 7;
-          emptyCell.className = 'text-center';
-          emptyCell.textContent = 'No clients found';
-          emptyRow.appendChild(emptyCell);
-          tbody.appendChild(emptyRow);
+          // When there are no clients, still render a row with 7 empty cells
+          // so the column count matches the header.
+          const row = document.createElement('tr');
+          for (let i = 0; i < 7; i += 1) {
+            const cell = document.createElement('td');
+            if (i === 0) {
+              cell.textContent = 'No clients found';
+            } else {
+              cell.textContent = '';
+            }
+            row.appendChild(cell);
+          }
+          tbody.appendChild(row);
         }
       } catch (error) {
         console.error('Error loading clients:', error);
-        const errorRow = document.createElement('tr');
-        const errorCell = document.createElement('td');
-        errorCell.colSpan = 7;
-        errorCell.className = 'text-center text-danger';
-        errorCell.textContent = 'Error loading clients. Please refresh the page.';
-        errorRow.appendChild(errorCell);
-        tbody.appendChild(errorRow);
+        // On error, also keep a 7-column row so DataTables column count matches.
+        const row = document.createElement('tr');
+        for (let i = 0; i < 7; i += 1) {
+          const cell = document.createElement('td');
+          if (i === 0) {
+            cell.textContent =
+              'Error loading clients. Please refresh the page.';
+            cell.className = 'text-danger';
+          } else {
+            cell.textContent = '';
+          }
+          row.appendChild(cell);
+        }
+        tbody.appendChild(row);
       } finally {
         loader.classList.add('d-none');
       }
