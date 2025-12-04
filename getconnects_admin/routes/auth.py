@@ -44,18 +44,35 @@ def session_login():  # pragma: no cover - view logic
         email = claims.get("email", "") or f"{uid}@example.com"
         db = SessionLocal()
         try:
+            # First try to find user by UID
             user = db.query(User).filter_by(uid=uid).first()
+            
+            # If not found by UID, try to find by email (in case user was pre-created)
+            if not user:
+                user = db.query(User).filter_by(email=email).first()
+                if user:
+                    # Update the existing user's UID to match Supabase UID
+                    user.uid = uid
+                    db.commit()
+                    db.refresh(user)
+            
+            # If still not found, create new user
             if not user:
                 user = User(uid=uid, email=email)
                 db.add(user)
                 db.commit()
                 db.refresh(user)
+            
             session["uid"] = uid
             session["user_id"] = user.id
             session["is_staff"] = user.is_staff
             session["is_superuser"] = user.is_superuser
             session["permissions"] = [p.path for p in user.permissions]
             return ("", 204)
+        except Exception as e:
+            db.rollback()
+            print(f"Error during login: {e}")
+            return ("Internal Server Error", 500)
         finally:
             db.close()
     print("Invalid Supabase token:", id_token)
