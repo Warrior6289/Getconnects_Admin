@@ -224,6 +224,30 @@
       }
     }
 
+    // Validate table structure before initializing DataTables
+    function validateTableStructure(tableId, expectedColumns) {
+      const table = document.getElementById(tableId);
+      if (!table) return false;
+      
+      const thead = table.querySelector('thead');
+      const tbody = table.querySelector('tbody');
+      if (!thead || !tbody) return false;
+      
+      const headerCells = thead.querySelectorAll('th');
+      if (headerCells.length !== expectedColumns) return false;
+      
+      const rows = tbody.querySelectorAll('tr');
+      for (const row of rows) {
+        const cells = row.querySelectorAll('td');
+        // Allow colspan cells (for empty/error states)
+        if (cells.length !== expectedColumns && !row.querySelector('td[colspan]')) {
+          return false;
+        }
+      }
+      
+      return true;
+    }
+
     let dataTableInstance = null;
 
     document.addEventListener('DOMContentLoaded', async () => {
@@ -234,17 +258,30 @@
       // Load clients data first
       await loadClients();
       
+      // Validate table structure before initializing DataTables
+      if (!validateTableStructure('clientsTable', 7)) {
+        console.error('Table structure validation failed. Skipping DataTables initialization.');
+        return;
+      }
+      
       // Initialize DataTables only after data is loaded
       // Destroy existing instance if any (for page refreshes)
       if (dataTableInstance) {
         dataTableInstance.destroy();
       }
       
-      dataTableInstance = $('#clientsTable').DataTable({
-        order: [[0, 'desc']], // Sort by ID descending
-        pageLength: 10,
-        responsive: true
-      });
+      // Suppress DataTables warnings
+      $.fn.dataTable.ext.errMode = 'none';
+      
+      try {
+        dataTableInstance = $('#clientsTable').DataTable({
+          order: [[0, 'desc']], // Sort by ID descending
+          pageLength: 10,
+          responsive: true
+        });
+      } catch (error) {
+        console.error('DataTables initialization error:', error);
+      }
       
       // Customize search input
       const searchInput = document.querySelector('#clientsTable_filter input');
