@@ -77,7 +77,10 @@ def create_app(config_name: str | None = None) -> Flask:
             perms = session.get("permissions") or []
             return any(path.startswith(p) or p.startswith(path) for p in perms)
 
-        return {"has_permission": has_permission}
+        return {
+            "has_permission": has_permission,
+            "config": cfg if cfg_class else None
+        }
 
     PUBLIC_ENDPOINTS = {
         "auth.login_page",
