@@ -17,8 +17,13 @@ def login_page():  # pragma: no cover - view logic
         return redirect("/dashboard")
 
     config, missing = supabase_config()
+    # Ensure config dict has safe defaults
+    safe_config = {
+        "url": config.get("url") or "",
+        "anonKey": config.get("anonKey") or ""
+    }
     return render_template(
-        "login.html", supabase_config=config, missing_keys=missing
+        "login.html", supabase_config=safe_config, missing_keys=missing
     )
 
 
