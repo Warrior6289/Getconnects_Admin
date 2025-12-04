@@ -8,6 +8,8 @@ class BaseConfig:
     def __init__(self) -> None:
         self.SECRET_KEY = os.getenv("FLASK_SECRET_KEY")
         self.ENCRYPTION_KEY = os.getenv("ENCRYPTION_KEY")
+        # Logo URL for sidebar and navigation
+        self.LOGO_URL = os.getenv("LOGO_URL") or "/static/assets/images/logo.png"
 
 
 class DevelopmentConfig(BaseConfig):
