@@ -5,3 +5,76 @@
 <script src="{{ url_for('static', filename='assets/js/pcoded.min.js') }}"></script>
 <script src="{{ url_for('static', filename='assets/js/dark-mode.js') }}"></script>
 <script src="{{ url_for('static', filename='assets/js/confirm.js') }}"></script>
+<script>
+// Auto-scroll sidebar when menu items expand
+(function() {
+  function scrollToExpandedMenu() {
+    const sidebar = document.querySelector('.pcoded-navbar .scroll-div.navbar-content');
+    if (!sidebar) return;
+    
+    const expandedMenu = document.querySelector('.pcoded-navbar .pcoded-hasmenu.pcoded-trigger');
+    if (!expandedMenu) return;
+    
+    const submenu = expandedMenu.querySelector('.pcoded-submenu');
+    if (!submenu) return;
+    
+    // Get positions relative to sidebar
+    const sidebarRect = sidebar.getBoundingClientRect();
+    const menuRect = expandedMenu.getBoundingClientRect();
+    const submenuRect = submenu.getBoundingClientRect();
+    
+    // Calculate if submenu is visible
+    const sidebarTop = sidebarRect.top;
+    const sidebarBottom = sidebarRect.bottom;
+    const submenuTop = submenuRect.top;
+    const submenuBottom = submenuRect.bottom;
+    
+    // If submenu extends beyond bottom of sidebar, scroll down
+    if (submenuBottom > sidebarBottom) {
+      const scrollAmount = submenuBottom - sidebarBottom + 30; // 30px padding
+      sidebar.scrollTop += scrollAmount;
+    }
+    // If menu item is above visible area, scroll up to show it
+    else if (menuRect.top < sidebarTop) {
+      const scrollAmount = sidebarTop - menuRect.top + 30;
+      sidebar.scrollTop -= scrollAmount;
+    }
+  }
+  
+  // Listen for menu clicks
+  document.addEventListener('DOMContentLoaded', function() {
+    const menuItems = document.querySelectorAll('.pcoded-navbar .pcoded-hasmenu > a');
+    
+    menuItems.forEach(function(menuItem) {
+      menuItem.addEventListener('click', function() {
+        // Wait for menu expansion animation to complete
+        setTimeout(scrollToExpandedMenu, 350);
+      });
+    });
+    
+    // Also use MutationObserver to catch programmatic menu expansions
+    const sidebar = document.querySelector('.pcoded-navbar .scroll-div.navbar-content');
+    if (sidebar) {
+      const observer = new MutationObserver(function(mutations) {
+        mutations.forEach(function(mutation) {
+          if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
+            const target = mutation.target;
+            if (target.classList.contains('pcoded-trigger')) {
+              setTimeout(scrollToExpandedMenu, 350);
+            }
+          }
+        });
+      });
+      
+      const navBar = document.querySelector('.pcoded-navbar .pcoded-inner-navbar');
+      if (navBar) {
+        observer.observe(navBar, {
+          attributes: true,
+          subtree: true,
+          attributeFilter: ['class']
+        });
+      }
+    }
+  });
+})();
+</script>

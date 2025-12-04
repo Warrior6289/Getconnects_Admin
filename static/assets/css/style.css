@@ -2062,6 +2062,8 @@ p.text-muted {
 }
 .pcoded-navbar .scroll-div.navbar-content {
   height: calc(100vh - 70px);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 .pcoded-navbar .header-logo {
   position: relative;
