@@ -43,6 +43,7 @@
                 </div>
                 {% endif %}
                 <div id="login-error" class="alert alert-danger d-none" role="alert"></div>
+                <div id="login-success" class="alert alert-success d-none" role="alert"></div>
                 <!-- Login form -->
                 <form id="login-form">
                   <!-- Email field -->
@@ -57,7 +58,7 @@
                     />
                   </div>
                   <!-- Password field -->
-                  <div class="mb-3">
+                  <div class="mb-3 position-relative">
                     <input
                       type="password"
                       id="password"
@@ -66,6 +67,15 @@
                       required
                       {% if missing_keys %}disabled{% endif %}
                     />
+                    <button
+                      type="button"
+                      id="toggle-password"
+                      class="btn btn-link position-absolute"
+                      style="right: 10px; top: 50%; transform: translateY(-50%); padding: 0; border: none; background: none; color: #6c757d; z-index: 10;"
+                      {% if missing_keys %}disabled{% endif %}
+                    >
+                      <i class="feather icon-eye" id="password-icon"></i>
+                    </button>
                   </div>
                   <div class="text-end mb-3">
                     <a href="#" id="forgot-password-link" {% if missing_keys %}class="disabled"{% endif %}>Forgot password?</a>
@@ -99,6 +109,24 @@
         .querySelector('meta[name="csrf-token"]').getAttribute('content');
       const form = document.getElementById('login-form');
       const errorBox = document.getElementById('login-error');
+      const successBox = document.getElementById('login-success');
+      const passwordInput = document.getElementById('password');
+      const togglePasswordBtn = document.getElementById('toggle-password');
+      const passwordIcon = document.getElementById('password-icon');
+      
+      // Password visibility toggle
+      togglePasswordBtn.addEventListener('click', function() {
+        if (passwordInput.type === 'password') {
+          passwordInput.type = 'text';
+          passwordIcon.classList.remove('icon-eye');
+          passwordIcon.classList.add('icon-eye-off');
+        } else {
+          passwordInput.type = 'password';
+          passwordIcon.classList.remove('icon-eye-off');
+          passwordIcon.classList.add('icon-eye');
+        }
+      });
+      
       form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const email = document.getElementById('email').value;
@@ -121,15 +149,18 @@
           });
           if (resp.status === 204) {
             errorBox.classList.add('d-none');
+            successBox.classList.add('d-none');
             window.location.href = '/dashboard';
           } else {
             console.error('Login failed with status', resp.status);
             const message = await resp.text();
+            successBox.classList.add('d-none');
             errorBox.textContent = message || 'Login failed. Please try again.';
             errorBox.classList.remove('d-none');
           }
         } catch (err) {
           console.error('Login error:', err);
+          successBox.classList.add('d-none');
           errorBox.textContent = err.message || 'Login failed. Please try again.';
           errorBox.classList.remove('d-none');
         }
@@ -139,12 +170,24 @@
         .getElementById('forgot-password-link')
         .addEventListener('click', async (e) => {
           e.preventDefault();
+          const forgotPasswordLink = e.target;
           const email = document.getElementById('email').value;
+          
+          // Hide previous messages
+          errorBox.classList.add('d-none');
+          successBox.classList.add('d-none');
+          
           if (!email) {
             errorBox.textContent = 'Please enter your email address first.';
             errorBox.classList.remove('d-none');
             return;
           }
+          
+          // Show loading state
+          const originalText = forgotPasswordLink.textContent;
+          forgotPasswordLink.textContent = 'Sending...';
+          forgotPasswordLink.style.pointerEvents = 'none';
+          
           try {
             const { error } = await supabase.auth.resetPasswordForEmail(
               email,
@@ -153,12 +196,31 @@
               }
             );
             if (error) throw error;
-            errorBox.textContent = 'Password reset email sent.';
-            errorBox.classList.remove('d-none');
+            
+            // Success - show success message
+            successBox.textContent = 'Password reset email sent! Please check your inbox.';
+            successBox.classList.remove('d-none');
+            errorBox.classList.add('d-none');
           } catch (err) {
             console.error('Password reset error:', err);
-            errorBox.textContent = err.message || 'Could not send reset email. Please try again.';
+            // Error - show error message
+            let errorMessage = 'Could not send reset email. Please try again.';
+            if (err.message) {
+              if (err.message.includes('not found') || err.message.includes('does not exist')) {
+                errorMessage = 'No account found with this email address.';
+              } else if (err.message.includes('rate limit') || err.message.includes('too many')) {
+                errorMessage = 'Too many requests. Please wait a few minutes before trying again.';
+              } else {
+                errorMessage = err.message;
+              }
+            }
+            errorBox.textContent = errorMessage;
             errorBox.classList.remove('d-none');
+            successBox.classList.add('d-none');
+          } finally {
+            // Restore link state
+            forgotPasswordLink.textContent = originalText;
+            forgotPasswordLink.style.pointerEvents = 'auto';
           }
         });
     </script>

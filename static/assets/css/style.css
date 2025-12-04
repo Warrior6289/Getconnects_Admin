@@ -7554,6 +7554,30 @@ table.footable-paging-center > tfoot > tr.footable-paging > td {
   object-fit: contain;
 }
 
+/* Password visibility toggle button styling */
+.auth-wrapper .position-relative #toggle-password {
+  cursor: pointer;
+  transition: color 0.2s ease;
+}
+
+.auth-wrapper .position-relative #toggle-password:hover {
+  color: #04a9f5 !important;
+}
+
+.auth-wrapper .position-relative #toggle-password:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+.auth-wrapper .position-relative #toggle-password:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.auth-wrapper .position-relative #password {
+  padding-right: 40px;
+}
+
 @keyframes floating {
   from {
     -webkit-transform: rotate(0deg) translate(-10px) rotate(0deg);
