@@ -70,6 +70,7 @@ def session_login():  # pragma: no cover - view logic
             
             session["uid"] = uid
             session["user_id"] = user.id
+            session["email"] = user.email
             session["is_staff"] = user.is_staff
             session["is_superuser"] = user.is_superuser
             session["permissions"] = [p.path for p in user.permissions]

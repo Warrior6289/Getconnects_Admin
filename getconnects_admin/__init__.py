@@ -5,6 +5,7 @@ from flask import Flask, redirect, request, session, url_for, render_template
 from flask_wtf import CSRFProtect
 from flask_caching import Cache
 import click
+import hashlib
 
 from .models import Base, SessionLocal, engine
 from .models.user import User
@@ -77,9 +78,14 @@ def create_app(config_name: str | None = None) -> Flask:
             perms = session.get("permissions") or []
             return any(path.startswith(p) or p.startswith(path) for p in perms)
 
+        def md5_hash(text: str) -> str:
+            """Generate MD5 hash for Gravatar URLs."""
+            return hashlib.md5(text.encode('utf-8')).hexdigest()
+
         return {
             "has_permission": has_permission,
-            "config": cfg if cfg_class else None
+            "config": cfg if cfg_class else None,
+            "md5": md5_hash
         }
 
     PUBLIC_ENDPOINTS = {

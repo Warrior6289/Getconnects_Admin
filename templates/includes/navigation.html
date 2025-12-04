@@ -77,11 +77,17 @@
                     </a>
                     <div class="dropdown-menu dropdown-menu-right profile-notification">
                         <div class="pro-head">
-                            <img src="{{ url_for('static', filename='assets/images/user/avatar-1.jpg') }}" class="img-radius" alt="User-Profile-Image">
+                            {% set user_email = session.get('email', '') %}
+                            {% if user_email %}
+                                {% set email_hash = md5(user_email.lower()) %}
+                                <img src="https://www.gravatar.com/avatar/{{ email_hash }}?s=40&d=identicon" class="img-radius" alt="User-Profile-Image" onerror="this.src='{{ url_for('static', filename='assets/images/user/avatar-1.jpg') }}'">
+                            {% else %}
+                                <img src="{{ url_for('static', filename='assets/images/user/avatar-1.jpg') }}" class="img-radius" alt="User-Profile-Image">
+                            {% endif %}
                             <span>
-                                {{ session.get('user', '') }}
+                                {{ user_email or 'User' }}
                             </span>
-                            <a href="/auth-signin.html" class="dud-logout" title="Logout">
+                            <a href="/logout" class="dud-logout" title="Logout">
                                 <i class="feather icon-log-out"></i>
                             </a>
                         </div>
