@@ -1,11 +1,191 @@
 {% extends 'base.html' %}
 {% block title %}Gmail Settings - GetConnects Portal{% endblock %}
+
+{% block stylesheets %}
+  {{ super() }}
+  <style>
+    /* Professional Settings Page Styling */
+    .settings-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+    }
+    
+    .settings-header h1 {
+      color: #fff;
+      font-weight: 600;
+      margin: 0;
+      font-size: 2rem;
+    }
+    
+    .settings-card {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+    
+    .settings-card .card-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      font-weight: 600;
+      padding: 1.25rem 1.5rem;
+      border-bottom: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .settings-card .card-header h5 {
+      margin: 0;
+      color: #fff;
+      font-size: 1.125rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .settings-card .card-block {
+      padding: 1.75rem;
+    }
+    
+    .badge {
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 13px;
+    }
+    
+    .badge-success {
+      background: #48bb78;
+    }
+    
+    .badge-warning {
+      background: #f6ad55;
+    }
+    
+    .badge-secondary {
+      background: #cbd5e0;
+      color: #4a5568;
+    }
+    
+    .alert {
+      border: none;
+      border-radius: 8px;
+      padding: 1rem 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .alert-success {
+      background: #f0fff4;
+      color: #22543d;
+      border-left: 4px solid #48bb78;
+    }
+    
+    .alert-warning {
+      background: #fffaf0;
+      color: #744210;
+      border-left: 4px solid #f6ad55;
+    }
+    
+    .alert-secondary {
+      background: #f7fafc;
+      color: #4a5568;
+      border-left: 4px solid #cbd5e0;
+    }
+    
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    
+    .form-group label {
+      font-weight: 600;
+      color: #2d3748;
+      margin-bottom: 0.5rem;
+      font-size: 14px;
+    }
+    
+    .form-control, .form-select {
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 10px 14px;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn-outline-danger {
+      color: #f56565;
+      border: 2px solid #f56565;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      background: transparent;
+    }
+    
+    .btn-outline-danger:hover {
+      background: #f56565;
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(245, 101, 101, 0.3);
+    }
+    
+    .text-muted {
+      color: #718096 !important;
+      font-size: 14px;
+    }
+    
+    ol.text-muted {
+      padding-left: 1.25rem;
+    }
+    
+    @media (max-width: 768px) {
+      .settings-header {
+        padding: 1.5rem;
+      }
+      
+      .settings-header h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+{% endblock %}
+
 {% block content %}
+<!-- Professional Header with Gradient -->
+<div class="settings-header">
+  <h1><i class="feather icon-mail me-3"></i>Gmail Settings</h1>
+</div>
+
 <div class="row">
   <div class="col-lg-8 mx-auto">
-    <div class="card">
-      <div class="card-header d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center">
-        <h5 class="mb-2 mb-sm-0">Gmail API OAuth</h5>
+    <div class="card settings-card">
+      <div class="card-header">
+        <h5><i class="feather icon-key me-2"></i>Gmail API OAuth</h5>
         {% if api_status %}
         <span class="badge badge-{{ 'success' if api_status.connected else 'warning' }}">
           {{ 'Connected' if api_status.connected else 'Needs attention' }}

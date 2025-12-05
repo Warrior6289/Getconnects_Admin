@@ -1,10 +1,103 @@
 {% extends 'base.html' %}
 {% block title %}Notifications - GetConnects Portal{% endblock %}
+
+{% block stylesheets %}
+  {{ super() }}
+  <style>
+    /* Professional Notifications Page Styling */
+    .notifications-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+    }
+    
+    .notifications-header h1 {
+      color: #fff;
+      font-weight: 600;
+      margin: 0;
+      font-size: 2rem;
+    }
+    
+    .notifications-card {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+    
+    .table {
+      margin-bottom: 0;
+    }
+    
+    .table thead th {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      padding: 16px 20px;
+      border: none;
+    }
+    
+    .table tbody tr {
+      transition: all 0.2s ease;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .table tbody tr:hover {
+      background: #f8f9ff !important;
+      transform: translateX(4px);
+      box-shadow: -4px 0 0 #667eea;
+    }
+    
+    .table tbody td {
+      padding: 16px 20px;
+      vertical-align: middle;
+      font-size: 14px;
+      color: #495057;
+    }
+    
+    .table tbody td:first-child {
+      font-weight: 600;
+      color: #667eea;
+    }
+    
+    .table tbody td a {
+      color: #667eea;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    
+    .table tbody td a:hover {
+      color: #764ba2;
+      text-decoration: underline;
+    }
+    
+    @media (max-width: 768px) {
+      .notifications-header {
+        padding: 1.5rem;
+      }
+      
+      .notifications-header h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+{% endblock %}
+
 {% block content %}
-<h1 class="mb-3 mb-md-4">Notifications</h1>
-<div class="card">
+<!-- Professional Header with Gradient -->
+<div class="notifications-header">
+  <h1><i class="feather icon-bell me-3"></i>Notifications</h1>
+</div>
+
+<div class="card notifications-card">
   <div class="table-responsive">
-    <table class="table table-striped mb-0">
+    <table class="table table-hover mb-0">
       <thead>
         <tr>
           <th>Channel</th>

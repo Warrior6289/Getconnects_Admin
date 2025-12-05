@@ -1,11 +1,198 @@
 {% extends 'base.html' %}
 {% block title %}Permission Management - GetConnects Portal{% endblock %}
+
+{% block stylesheets %}
+  {{ super() }}
+  <style>
+    /* Professional Staff Management Page Styling */
+    .staff-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+    }
+    
+    .staff-header h1 {
+      color: #fff;
+      font-weight: 600;
+      margin: 0;
+      font-size: 2rem;
+    }
+    
+    .staff-card {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    
+    .staff-card .card-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      font-weight: 600;
+      padding: 1.25rem 1.5rem;
+      border-bottom: none;
+    }
+    
+    .staff-card .card-header h5 {
+      margin: 0;
+      color: #fff;
+      font-size: 1.125rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .staff-card .card-block {
+      padding: 1.75rem;
+    }
+    
+    .form-control {
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 10px 14px;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+    
+    .form-control:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .nav-tabs {
+      border-bottom: 2px solid #e9ecef;
+      margin-bottom: 1.5rem;
+    }
+    
+    .nav-tabs .nav-link {
+      border: none;
+      color: #6c757d;
+      font-weight: 500;
+      padding: 0.75rem 1.25rem;
+      transition: all 0.3s ease;
+      border-bottom: 3px solid transparent;
+    }
+    
+    .nav-tabs .nav-link:hover {
+      color: #667eea;
+      border-color: transparent;
+    }
+    
+    .nav-tabs .nav-link.active {
+      color: #667eea;
+      background: transparent;
+      border-color: transparent transparent #667eea transparent;
+    }
+    
+    .btn-primary, .btn-secondary {
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      border: none;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn-secondary {
+      background: #6c757d;
+      box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+    }
+    
+    .btn-secondary:hover {
+      background: #5a6268;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+    }
+    
+    .btn-sm {
+      padding: 6px 14px;
+      font-size: 13px;
+    }
+    
+    .btn-outline-primary {
+      color: #667eea;
+      border: 2px solid #667eea;
+      background: transparent;
+    }
+    
+    .btn-outline-primary:hover {
+      background: #667eea;
+      color: #fff;
+    }
+    
+    .btn-outline-secondary {
+      color: #6c757d;
+      border: 2px solid #6c757d;
+      background: transparent;
+    }
+    
+    .btn-outline-secondary:hover {
+      background: #6c757d;
+      color: #fff;
+    }
+    
+    .table thead th {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      padding: 16px 20px;
+      border: none;
+    }
+    
+    .table tbody tr {
+      transition: all 0.2s ease;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .table tbody tr:hover {
+      background: #f8f9ff !important;
+    }
+    
+    .table tbody td {
+      padding: 16px 20px;
+      vertical-align: middle;
+      font-size: 14px;
+      color: #495057;
+    }
+    
+    @media (max-width: 768px) {
+      .staff-header {
+        padding: 1.5rem;
+      }
+      
+      .staff-header h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+{% endblock %}
+
 {% block content %}
+<!-- Professional Header with Gradient -->
+<div class="staff-header">
+  <h1><i class="feather icon-users me-3"></i>Staff Management</h1>
+</div>
+
 <div class="row">
   <div class="col-sm-12">
-    <div class="card">
+    <div class="card staff-card">
       <div class="card-header">
-        <h5>Add User</h5>
+        <h5><i class="feather icon-user-plus me-2"></i>Add User</h5>
       </div>
       <div class="card-block">
         <form method="post" class="mb-4">
@@ -79,9 +266,9 @@
 
 <div class="row">
   <div class="col-sm-12">
-    <div class="card">
+    <div class="card staff-card">
       <div class="card-header">
-        <h5>Existing Users</h5>
+        <h5><i class="feather icon-users me-2"></i>Existing Users</h5>
       </div>
       <div class="card-block">
         <div class="table-responsive">

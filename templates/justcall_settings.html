@@ -1,11 +1,181 @@
 {% extends 'base.html' %}
 {% block title %}JustCall Settings - GetConnects Portal{% endblock %}
+
+{% block stylesheets %}
+  {{ super() }}
+  <style>
+    /* Professional Settings Page Styling */
+    .settings-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+    }
+    
+    .settings-header h1 {
+      color: #fff;
+      font-weight: 600;
+      margin: 0;
+      font-size: 2rem;
+    }
+    
+    .settings-card {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      margin-bottom: 1.5rem;
+      overflow: hidden;
+    }
+    
+    .settings-card .card-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      font-weight: 600;
+      padding: 1.25rem 1.5rem;
+      border-bottom: none;
+    }
+    
+    .settings-card .card-header h5 {
+      margin: 0;
+      color: #fff;
+      font-size: 1.125rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .settings-card .card-block {
+      padding: 1.75rem;
+    }
+    
+    .form-control, .form-select {
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 10px 14px;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn-danger {
+      background: linear-gradient(135deg, #f56565 0%, #c53030 100%);
+      border: none;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(245, 101, 101, 0.3);
+    }
+    
+    .btn-danger:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(245, 101, 101, 0.4);
+    }
+    
+    .btn-secondary {
+      background: #6c757d;
+      border: none;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(108, 117, 125, 0.3);
+    }
+    
+    .btn-secondary:hover {
+      background: #5a6268;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(108, 117, 125, 0.4);
+    }
+    
+    .table {
+      margin-bottom: 0;
+    }
+    
+    .table thead th {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      padding: 16px 20px;
+      border: none;
+    }
+    
+    .table tbody tr {
+      transition: all 0.2s ease;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .table tbody tr:hover {
+      background: #f8f9ff !important;
+      transform: translateX(4px);
+      box-shadow: -4px 0 0 #667eea;
+    }
+    
+    .table tbody td {
+      padding: 16px 20px;
+      vertical-align: middle;
+      font-size: 14px;
+      color: #495057;
+    }
+    
+    .table tbody td a {
+      color: #667eea;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+    
+    .table tbody td a:hover {
+      color: #764ba2;
+      text-decoration: underline;
+    }
+    
+    @media (max-width: 768px) {
+      .settings-header {
+        padding: 1.5rem;
+      }
+      
+      .settings-header h1 {
+        font-size: 1.5rem;
+      }
+    }
+  </style>
+{% endblock %}
+
 {% block content %}
+<!-- Professional Header with Gradient -->
+<div class="settings-header">
+  <h1><i class="feather icon-settings me-3"></i>JustCall Settings</h1>
+</div>
+
 <div class="row">
   <div class="col-sm-12">
-    <div class="card">
+    <div class="card settings-card">
       <div class="card-header">
-        <h5>JustCall Integration</h5>
+        <h5><i class="feather icon-phone me-2"></i>JustCall Integration</h5>
       </div>
       <div class="card-block">
         {% if credentials %}
@@ -60,9 +230,9 @@
 
 <div class="row mt-4">
   <div class="col-sm-12">
-    <div class="card">
+    <div class="card settings-card">
       <div class="card-header">
-        <h5>Webhooks</h5>
+        <h5><i class="feather icon-link me-2"></i>Webhooks</h5>
       </div>
       <div class="card-block">
         <form method="post" class="mb-3">
