@@ -297,6 +297,151 @@ a:hover,
 }
 
 /* ===================================
+   PROFESSIONAL TOP NAVIGATION ICONS
+   =================================== */
+
+/* Top navigation bar styling */
+.pcoded-header .navbar-nav {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pcoded-header .navbar-nav > li {
+  display: flex;
+  align-items: center;
+}
+
+/* Professional icon buttons */
+.pcoded-header .navbar-nav > li > a,
+.pcoded-header .navbar-nav > li > label,
+.pcoded-header .navbar-nav > li .dropdown-toggle {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  background: #f8f9fa;
+  color: #495057;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  border: 2px solid transparent;
+  position: relative;
+}
+
+.pcoded-header .navbar-nav > li > a:hover,
+.pcoded-header .navbar-nav > li > label:hover,
+.pcoded-header .navbar-nav > li .dropdown-toggle:hover {
+  background: #04a9f5;
+  color: #fff;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(4, 169, 245, 0.3);
+  border-color: #04a9f5;
+}
+
+/* Icon sizing */
+.pcoded-header .navbar-nav .icon,
+.pcoded-header .navbar-nav .feather {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+
+/* Theme toggle styling */
+#theme-switch {
+  display: none;
+}
+
+.pcoded-header #theme-indicator {
+  font-size: 20px;
+}
+
+/* Notification badge */
+.pcoded-header .dropdown .badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 18px;
+  height: 18px;
+  padding: 2px 5px;
+  font-size: 10px;
+  font-weight: 600;
+  border-radius: 9px;
+  background: #f56565;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Active state for dropdowns */
+.pcoded-header .navbar-nav .dropdown.show > a,
+.pcoded-header .navbar-nav .dropdown.show .dropdown-toggle {
+  background: #04a9f5;
+  color: #fff;
+  box-shadow: 0 4px 12px rgba(4, 169, 245, 0.3);
+}
+
+/* Notification dropdown styling */
+.pcoded-header .dropdown-menu.notification {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  margin-top: 0.5rem;
+  min-width: 320px;
+}
+
+.pcoded-header .dropdown-menu.notification .noti-head {
+  background: linear-gradient(135deg, #04a9f5 0%, #0398db 100%);
+  color: #fff;
+  padding: 1rem 1.25rem;
+  border-radius: 12px 12px 0 0;
+}
+
+.pcoded-header .dropdown-menu.notification .noti-head h6 {
+  color: #fff;
+  margin: 0;
+  font-weight: 600;
+}
+
+/* User profile dropdown */
+.pcoded-header .drp-user .dropdown-menu {
+  border: none;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  margin-top: 0.5rem;
+  min-width: 200px;
+}
+
+.pcoded-header .drp-user .pro-head {
+  background: linear-gradient(135deg, #04a9f5 0%, #0398db 100%);
+  padding: 1rem 1.25rem;
+  border-radius: 12px 12px 0 0;
+}
+
+/* Remove default styles */
+.pcoded-header .navbar-nav > li > a {
+  padding: 0;
+  margin: 0;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+  .pcoded-header .navbar-nav > li > a,
+  .pcoded-header .navbar-nav > li > label,
+  .pcoded-header .navbar-nav > li .dropdown-toggle {
+    width: 36px;
+    height: 36px;
+  }
+  
+  .pcoded-header .navbar-nav .icon,
+  .pcoded-header .navbar-nav .feather {
+    font-size: 18px;
+  }
+}
+
+/* ===================================
    PROFESSIONAL CHECKBOXES
    =================================== */
 
