@@ -32,28 +32,41 @@
           </ul>
           <div class="tab-content mb-2">
             <div class="tab-pane fade show active" id="add-role" role="tabpanel" aria-labelledby="add-role-tab">
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="role" value="admin" id="add_role_admin">
-                <label class="form-check-label" for="add_role_admin">Admin</label>
-              </div>
-              <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" name="role" value="staff" id="add_role_staff" checked>
-                <label class="form-check-label" for="add_role_staff">Staff</label>
+              <div class="role-toggle-group">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="role" value="admin" id="add_role_admin">
+                  <label class="form-check-label" for="add_role_admin">Admin</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" name="role" value="staff" id="add_role_staff" checked>
+                  <label class="form-check-label" for="add_role_staff">Staff</label>
+                </div>
               </div>
             </div>
             <div class="tab-pane fade" id="add-perms" role="tabpanel" aria-labelledby="add-perms-tab">
               <div class="permission-select-wrapper">
-                <label class="form-label">Select Permissions:</label>
-                <select name="pages" multiple class="form-select permission-select" id="add_permissions_select" size="8">
-                  {% for path, label in page_options %}
-                  <option value="{{ path }}">{{ label }}</option>
-                  {% endfor %}
-                </select>
-                <div class="permission-helper-buttons">
-                  <button type="button" class="btn btn-sm btn-outline-primary" onclick="selectAllPermissions('add_permissions_select')">Select All</button>
-                  <button type="button" class="btn btn-sm btn-outline-secondary" onclick="deselectAllPermissions('add_permissions_select')">Deselect All</button>
+                <label class="form-label mb-2">Select Permissions:</label>
+                <div class="permission-dropdown-custom" id="add_permissions_dropdown">
+                  <div class="permission-dropdown-button" onclick="togglePermissionDropdown('add_permissions_dropdown')">
+                    <span class="dropdown-text">
+                      <span class="dropdown-label">Choose permissions</span>
+                      <span class="permission-selected-count" style="display: none;">0</span>
+                    </span>
+                    <span class="dropdown-arrow">▼</span>
+                  </div>
+                  <div class="permission-dropdown-menu">
+                    {% for path, label in page_options %}
+                    <div class="permission-dropdown-item">
+                      <input type="checkbox" name="pages" value="{{ path }}" id="add_perm_check_{{ loop.index }}" onchange="updatePermissionCount('add_permissions_dropdown')">
+                      <label for="add_perm_check_{{ loop.index }}">{{ label }}</label>
+                    </div>
+                    {% endfor %}
+                  </div>
                 </div>
-                <small class="form-text text-muted mt-2 d-block">Hold Ctrl (Cmd on Mac) to select multiple items</small>
+                <div class="permission-helper-buttons">
+                  <button type="button" class="btn btn-sm btn-outline-primary" onclick="selectAllPermissionsCustom('add_permissions_dropdown')">Select All</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" onclick="deselectAllPermissionsCustom('add_permissions_dropdown')">Deselect All</button>
+                </div>
               </div>
             </div>
           </div>
@@ -100,28 +113,41 @@
                     </ul>
                     <div class="tab-content mb-2">
                       <div class="tab-pane fade show active" id="role-{{ user.id }}" role="tabpanel" aria-labelledby="role-tab-{{ user.id }}">
-                        <div class="form-check form-check-inline">
-                          <input class="form-check-input" type="radio" name="role" value="admin" id="role_admin_{{ user.id }}" {% if user.is_superuser %}checked{% endif %}>
-                          <label class="form-check-label" for="role_admin_{{ user.id }}">Admin</label>
-                        </div>
-                        <div class="form-check form-check-inline">
-                          <input class="form-check-input" type="radio" name="role" value="staff" id="role_staff_{{ user.id }}" {% if user.is_staff and not user.is_superuser %}checked{% endif %}>
-                          <label class="form-check-label" for="role_staff_{{ user.id }}">Staff</label>
+                        <div class="role-toggle-group">
+                          <div class="form-check">
+                            <input class="form-check-input" type="radio" name="role" value="admin" id="role_admin_{{ user.id }}" {% if user.is_superuser %}checked{% endif %}>
+                            <label class="form-check-label" for="role_admin_{{ user.id }}">Admin</label>
+                          </div>
+                          <div class="form-check">
+                            <input class="form-check-input" type="radio" name="role" value="staff" id="role_staff_{{ user.id }}" {% if user.is_staff and not user.is_superuser %}checked{% endif %}>
+                            <label class="form-check-label" for="role_staff_{{ user.id }}">Staff</label>
+                          </div>
                         </div>
                       </div>
                       <div class="tab-pane fade" id="perms-{{ user.id }}" role="tabpanel" aria-labelledby="perms-tab-{{ user.id }}">
                         <div class="permission-select-wrapper">
-                          <label class="form-label">Select Permissions:</label>
-                          <select name="pages" multiple class="form-select permission-select" id="permissions_select_{{ user.id }}" size="8">
-                            {% for path, label in page_options %}
-                            <option value="{{ path }}" {% if path in user.permissions %}selected{% endif %}>{{ label }}</option>
-                            {% endfor %}
-                          </select>
-                          <div class="permission-helper-buttons">
-                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="selectAllPermissions('permissions_select_{{ user.id }}')">Select All</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="deselectAllPermissions('permissions_select_{{ user.id }}')">Deselect All</button>
+                          <label class="form-label mb-2">Select Permissions:</label>
+                          <div class="permission-dropdown-custom" id="permissions_dropdown_{{ user.id }}">
+                            <div class="permission-dropdown-button" onclick="togglePermissionDropdown('permissions_dropdown_{{ user.id }}')">
+                              <span class="dropdown-text">
+                                <span class="dropdown-label">Choose permissions</span>
+                                <span class="permission-selected-count" style="display: none;">0</span>
+                              </span>
+                              <span class="dropdown-arrow">▼</span>
+                            </div>
+                            <div class="permission-dropdown-menu">
+                              {% for path, label in page_options %}
+                              <div class="permission-dropdown-item">
+                                <input type="checkbox" name="pages" value="{{ path }}" id="perm_check_{{ loop.index }}_{{ user.id }}" {% if path in user.permissions %}checked{% endif %} onchange="updatePermissionCount('permissions_dropdown_{{ user.id }}')">
+                                <label for="perm_check_{{ loop.index }}_{{ user.id }}">{{ label }}</label>
+                              </div>
+                              {% endfor %}
+                            </div>
                           </div>
-                          <small class="form-text text-muted mt-2 d-block">Hold Ctrl (Cmd on Mac) to select multiple items</small>
+                          <div class="permission-helper-buttons">
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="selectAllPermissionsCustom('permissions_dropdown_{{ user.id }}')">Select All</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="deselectAllPermissionsCustom('permissions_dropdown_{{ user.id }}')">Deselect All</button>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -141,23 +167,90 @@
 
 {% block javascripts %}
 <script>
-// Permission select helper functions
-function selectAllPermissions(selectId) {
-  const select = document.getElementById(selectId);
-  if (select) {
-    for (let i = 0; i < select.options.length; i++) {
-      select.options[i].selected = true;
+// Custom dropdown permission functions
+function togglePermissionDropdown(dropdownId) {
+  const dropdown = document.getElementById(dropdownId);
+  if (!dropdown) return;
+  
+  const button = dropdown.querySelector('.permission-dropdown-button');
+  const menu = dropdown.querySelector('.permission-dropdown-menu');
+  
+  // Close other dropdowns
+  document.querySelectorAll('.permission-dropdown-menu.show').forEach(function(otherMenu) {
+    if (otherMenu !== menu) {
+      otherMenu.classList.remove('show');
+      otherMenu.closest('.permission-dropdown-custom').querySelector('.permission-dropdown-button').classList.remove('active');
     }
+  });
+  
+  // Toggle current dropdown
+  button.classList.toggle('active');
+  menu.classList.toggle('show');
+  
+  // Update count on open
+  if (menu.classList.contains('show')) {
+    updatePermissionCount(dropdownId);
   }
 }
 
-function deselectAllPermissions(selectId) {
-  const select = document.getElementById(selectId);
-  if (select) {
-    for (let i = 0; i < select.options.length; i++) {
-      select.options[i].selected = false;
-    }
+function updatePermissionCount(dropdownId) {
+  const dropdown = document.getElementById(dropdownId);
+  if (!dropdown) return;
+  
+  const checkboxes = dropdown.querySelectorAll('input[type="checkbox"]:checked');
+  const count = checkboxes.length;
+  const countBadge = dropdown.querySelector('.permission-selected-count');
+  const labelSpan = dropdown.querySelector('.dropdown-label');
+  
+  if (count > 0) {
+    countBadge.textContent = count;
+    countBadge.style.display = 'inline-block';
+    labelSpan.textContent = count === 1 ? '1 permission selected' : count + ' permissions selected';
+  } else {
+    countBadge.style.display = 'none';
+    labelSpan.textContent = 'Choose permissions';
   }
 }
+
+function selectAllPermissionsCustom(dropdownId) {
+  const dropdown = document.getElementById(dropdownId);
+  if (!dropdown) return;
+  
+  const checkboxes = dropdown.querySelectorAll('input[type="checkbox"]');
+  checkboxes.forEach(function(checkbox) {
+    checkbox.checked = true;
+  });
+  
+  updatePermissionCount(dropdownId);
+}
+
+function deselectAllPermissionsCustom(dropdownId) {
+  const dropdown = document.getElementById(dropdownId);
+  if (!dropdown) return;
+  
+  const checkboxes = dropdown.querySelectorAll('input[type="checkbox"]');
+  checkboxes.forEach(function(checkbox) {
+    checkbox.checked = false;
+  });
+  
+  updatePermissionCount(dropdownId);
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.permission-dropdown-custom')) {
+    document.querySelectorAll('.permission-dropdown-menu.show').forEach(function(menu) {
+      menu.classList.remove('show');
+      menu.closest('.permission-dropdown-custom').querySelector('.permission-dropdown-button').classList.remove('active');
+    });
+  }
+});
+
+// Initialize counts on page load
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('.permission-dropdown-custom').forEach(function(dropdown) {
+    updatePermissionCount(dropdown.id);
+  });
+});
 </script>
 {% endblock %}
