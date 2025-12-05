@@ -55,8 +55,25 @@
    BUTTONS
    =================================== */
 
+/* Add Client button - White outline style */
+.btn-add-client {
+  background: rgba(255, 255, 255, 0.2) !important;
+  border: 2px solid rgba(255, 255, 255, 0.5) !important;
+  color: #fff !important;
+  backdrop-filter: blur(10px);
+  font-weight: 500;
+}
+
+.btn-add-client:hover {
+  background: rgba(255, 255, 255, 0.3) !important;
+  border-color: rgba(255, 255, 255, 0.8) !important;
+  color: #fff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Primary buttons */
 .btn-primary,
-.btn-add-client,
 .btn-manage-group,
 .permissions-dropdown-item .form-check-input:checked {
   background: linear-gradient(135deg, #04a9f5 0%, #0398db 100%) !important;
@@ -65,7 +82,6 @@
 }
 
 .btn-primary:hover,
-.btn-add-client:hover,
 .btn-manage-group:hover {
   background: linear-gradient(135deg, #1eb7ff 0%, #04a9f5 100%) !important;
   color: #fff !important;
