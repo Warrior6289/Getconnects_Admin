@@ -1,54 +1,245 @@
 {% extends 'base.html' %}
 {% block title %}Lead Types - GetConnects Portal{% endblock %}
 
+{% block stylesheets %}
+  {{ super() }}
+  <style>
+    /* Professional Lead Types Page Styling */
+    .lead-types-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+    }
+    
+    .lead-types-header h1 {
+      color: #fff;
+      font-weight: 600;
+      margin: 0;
+      font-size: 2rem;
+    }
+    
+    .lead-type-group-card {
+      background: #fff;
+      border: none;
+      border-radius: 12px;
+      padding: 1.75rem;
+      margin-bottom: 1.5rem;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .lead-type-group-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      transition: width 0.3s ease;
+    }
+    
+    .lead-type-group-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+    }
+    
+    .lead-type-group-card:hover::before {
+      width: 6px;
+    }
+    
+    .lead-type-group-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.25rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .lead-type-group-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #2d3748;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .lead-type-group-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 1.25rem;
+    }
+    
+    .btn-manage-group {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      color: #fff;
+      padding: 10px 24px;
+      border-radius: 8px;
+      font-weight: 500;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    
+    .btn-manage-group:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+      color: #fff;
+    }
+    
+    .lead-types-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 0.75rem;
+      margin-top: 1rem;
+    }
+    
+    .lead-type-item {
+      background: #f8f9fa;
+      padding: 12px 16px;
+      border-radius: 8px;
+      border-left: 3px solid #667eea;
+      transition: all 0.2s ease;
+      font-size: 14px;
+      color: #495057;
+      font-weight: 500;
+    }
+    
+    .lead-type-item:hover {
+      background: #e9ecef;
+      transform: translateX(4px);
+      border-left-width: 4px;
+    }
+    
+    .lead-type-empty {
+      text-align: center;
+      padding: 2rem;
+      color: #6c757d;
+      font-style: italic;
+      background: #f8f9fa;
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+    
+    .lead-type-count {
+      display: inline-block;
+      background: rgba(102, 126, 234, 0.1);
+      color: #667eea;
+      padding: 4px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      font-weight: 600;
+      margin-left: 0.5rem;
+    }
+    
+    .no-groups-message {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+    }
+    
+    .no-groups-message i {
+      font-size: 4rem;
+      color: #d0d0d0;
+      margin-bottom: 1rem;
+    }
+    
+    .no-groups-message p {
+      color: #6c757d;
+      font-size: 1.125rem;
+      margin: 0;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .lead-types-header {
+        padding: 1.5rem;
+      }
+      
+      .lead-types-header h1 {
+        font-size: 1.5rem;
+      }
+      
+      .lead-type-group-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      
+      .btn-manage-group {
+        width: 100%;
+        justify-content: center;
+      }
+      
+      .lead-types-list {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+{% endblock %}
+
 {% block content %}
-<h1 class="mb-4">Lead Types</h1>
+<!-- Professional Header with Gradient -->
+<div class="lead-types-header">
+  <h1><i class="feather icon-list me-3"></i>Lead Types</h1>
+</div>
 
-{% set themes = {
-  'B2B': {
-    'bg': 'bg-info-subtle',
-    'text': 'text-info',
-    'btn': 'btn-outline-info',
-    'no': 'text-info-emphasis fw-medium fst-italic'
-  },
-  'Real Estate': {
-    'bg': 'bg-success-subtle',
-    'text': 'text-success',
-    'btn': 'btn-outline-success',
-    'no': 'text-success-emphasis fst-italic'
-  },
-  'Investor': {
-    'bg': 'bg-warning-subtle',
-    'text': 'text-warning',
-    'btn': 'btn-outline-warning',
-    'no': 'text-warning-emphasis fst-italic'
-  }
-} %}
-
+<!-- Lead Type Groups -->
 {% for g in groups %}
-  {% set theme = themes.get(g.name, {
-    'bg': 'bg-light',
-    'text': '',
-    'btn': 'btn-outline-primary',
-    'no': 'text-muted'
-  }) %}
-  <div class="mb-3 mb-md-4 shadow-sm rounded-3 p-3 {{ theme.bg }}">
-    <div class="d-flex flex-column flex-sm-row justify-content-between align-items-start align-items-sm-center">
-      <h2 class="h5 mb-2 mb-sm-0 {{ theme.text }}">{{ g.name }}</h2>
-      <a href="{{ url_for('pages.manage_dispositions', group_id=g.id) }}" class="btn btn-sm {{ theme.btn }} w-100 w-sm-auto">
-        <i class="fas fa-cog me-1"></i> Manage
+  <div class="lead-type-group-card">
+    <div class="lead-type-group-header">
+      <h2 class="lead-type-group-title">
+        <span class="lead-type-group-icon">
+          <i class="feather icon-folder"></i>
+        </span>
+        {{ g.name }}
+        <span class="lead-type-count">{{ g.lead_types|length }}</span>
+      </h2>
+      <a href="{{ url_for('pages.manage_dispositions', group_id=g.id) }}" class="btn-manage-group">
+        <i class="feather icon-settings"></i>
+        Manage
       </a>
     </div>
-    <ul class="list-group list-group-flush mt-2">
-      {% for lt in g.lead_types %}
-        <li class="list-group-item">{{ lt.name }}</li>
-      {% else %}
-        <li class="list-group-item {{ theme.no }}">No lead types</li>
-      {% endfor %}
-    </ul>
+    
+    {% if g.lead_types %}
+      <div class="lead-types-list">
+        {% for lt in g.lead_types %}
+          <div class="lead-type-item">
+            <i class="feather icon-check-circle me-2" style="color: #667eea;"></i>{{ lt.name }}
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="lead-type-empty">
+        <i class="feather icon-inbox"></i>
+        <p class="mb-0">No lead types in this group</p>
+      </div>
+    {% endif %}
   </div>
 {% else %}
-  <p>No lead types.</p>
+  <div class="no-groups-message">
+    <i class="feather icon-folder"></i>
+    <p>No lead type groups found.</p>
+  </div>
 {% endfor %}
 {% endblock %}
 

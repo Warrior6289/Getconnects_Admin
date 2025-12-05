@@ -7,63 +7,287 @@
   {{ super() }}
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
   <style>
-    /* Align length selector and search input on one row */
+    /* Professional Clients Page Styling */
+    .clients-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+    }
+    
+    .clients-header h1 {
+      color: #fff;
+      font-weight: 600;
+      margin: 0;
+      font-size: 2rem;
+    }
+    
+    .clients-header .btn-add-client {
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: #fff;
+      font-weight: 500;
+      padding: 10px 24px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+    
+    .clients-header .btn-add-client:hover {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .clients-card {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+    
+    /* DataTables Controls */
     #clientsTable_wrapper .row:first-child {
+      background: #f8f9fa;
+      padding: 1.25rem;
+      border-radius: 12px 12px 0 0;
+      margin: 0;
       display: flex;
       align-items: center;
-      flex-wrap: wrap;
-      gap: .5rem;
+      justify-content: space-between;
+      gap: 1rem;
+      border-bottom: 2px solid #e9ecef;
     }
-    #clientsTable_wrapper .row:first-child > div {
-      flex: 0 0 auto;
-      width: auto;
+    
+    #clientsTable_wrapper .dataTables_length {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
-
-    /* Search bar spacing */
-    #clientsTable_filter {
-      margin-left: auto;
-      margin-top: 10px;
+    
+    #clientsTable_wrapper .dataTables_length label {
+      margin: 0;
+      font-size: 14px;
+      color: #495057;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
-
-    /* Rounded search bar */
-    #clientsTable_filter input {
-      border-radius: 50rem;
+    
+    #clientsTable_wrapper .dataTables_length select {
+      width: 70px;
+      padding: 6px 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: all 0.3s ease;
     }
-
-    /* Sticky bold table header */
+    
+    #clientsTable_wrapper .dataTables_length select:focus {
+      border-color: #667eea;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    #clientsTable_wrapper .dataTables_filter {
+      margin: 0;
+    }
+    
+    #clientsTable_wrapper .dataTables_filter label {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 14px;
+      color: #495057;
+      font-weight: 500;
+    }
+    
+    #clientsTable_wrapper .dataTables_filter input {
+      width: 280px;
+      padding: 8px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 50px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+    
+    #clientsTable_wrapper .dataTables_filter input:focus {
+      border-color: #667eea;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      width: 320px;
+    }
+    
+    /* Table Styling */
+    #clientsTable {
+      margin: 0 !important;
+    }
+    
     #clientsTable thead th {
-      position: sticky;
-      top: 0;
-      background: #fff;
-      z-index: 1;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
       font-weight: 600;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      padding: 16px 20px;
+      border: none;
+      white-space: nowrap;
     }
-
-    /* Highlight rows on hover */
+    
+    #clientsTable tbody tr {
+      transition: all 0.2s ease;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
     #clientsTable tbody tr:hover {
-      background-color: rgba(0, 0, 0, 0.05);
+      background: #f8f9ff !important;
+      transform: translateX(4px);
+      box-shadow: -4px 0 0 #667eea;
     }
-
-    /* Rounded pagination buttons */
+    
+    #clientsTable tbody td {
+      padding: 16px 20px;
+      vertical-align: middle;
+      font-size: 14px;
+      color: #495057;
+    }
+    
+    #clientsTable tbody td:first-child {
+      font-weight: 600;
+      color: #667eea;
+    }
+    
+    #clientsTable tbody td .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      color: #fff;
+      padding: 6px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    }
+    
+    #clientsTable tbody td .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    
+    /* Pagination */
+    #clientsTable_wrapper .dataTables_info {
+      padding: 1.25rem;
+      font-size: 14px;
+      color: #6c757d;
+      font-weight: 500;
+    }
+    
+    #clientsTable_wrapper .dataTables_paginate {
+      padding: 1.25rem;
+    }
+    
+    #clientsTable_wrapper .pagination {
+      margin: 0;
+      gap: 0.25rem;
+    }
+    
     #clientsTable_wrapper .pagination .page-link {
-      border-radius: 50rem;
+      border: 2px solid #e0e0e0;
+      color: #495057;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 14px;
+      transition: all 0.3s ease;
       margin: 0 2px;
+    }
+    
+    #clientsTable_wrapper .pagination .page-link:hover {
+      background: #f8f9ff;
+      border-color: #667eea;
+      color: #667eea;
+    }
+    
+    #clientsTable_wrapper .pagination .page-item.active .page-link {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-color: #667eea;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    }
+    
+    #clientsTable_wrapper .pagination .page-item.disabled .page-link {
+      background: #f8f9fa;
+      border-color: #e9ecef;
+      color: #adb5bd;
+    }
+    
+    /* Loading & Empty State */
+    #loading {
+      padding: 3rem !important;
+      font-size: 16px;
+      color: #667eea;
+      font-weight: 500;
+    }
+    
+    #clientsTable tbody tr td[colspan] {
+      text-align: center;
+      padding: 3rem !important;
+      font-size: 16px;
+      color: #6c757d;
+      font-style: italic;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .clients-header {
+        padding: 1.5rem;
+      }
+      
+      .clients-header h1 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+      }
+      
+      #clientsTable_wrapper .row:first-child {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      #clientsTable_wrapper .dataTables_filter input {
+        width: 100%;
+      }
+      
+      #clientsTable_wrapper .dataTables_filter input:focus {
+        width: 100%;
+      }
     }
   </style>
 {% endblock %}
 
 {% block content %}
-<div class="row align-items-center mb-3">
-  <div class="col-12 col-md-6">
-    <h1 class="mb-2 mb-md-0">Clients</h1>
-  </div>
-  <div class="col-12 col-md-6 text-md-end">
-    <button class="btn btn-primary w-100 w-md-auto" data-toggle="modal" data-target="#addClientModal">+ Add Client</button>
+<!-- Professional Header with Gradient -->
+<div class="clients-header">
+  <div class="row align-items-center">
+    <div class="col-12 col-md-6">
+      <h1>Clients</h1>
+    </div>
+    <div class="col-12 col-md-6 text-md-end mt-3 mt-md-0">
+      <button class="btn btn-add-client w-100 w-md-auto" data-toggle="modal" data-target="#addClientModal">
+        <i class="feather icon-plus me-2"></i>Add Client
+      </button>
+    </div>
   </div>
 </div>
-<div class="card">
+
+<!-- Professional Data Table Card -->
+<div class="card clients-card">
   <div class="table-responsive">
-    <table id="clientsTable" class="table table-striped table-hover mb-0">
+    <table id="clientsTable" class="table table-hover mb-0">
       <thead>
         <tr>
           <th>ID</th>
@@ -72,14 +296,16 @@
           <th>Email</th>
           <th>Phone</th>
           <th>Created At</th>
-          <th>Manage</th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody id="clientRows">
         {# Server-side rendered rows will be replaced by JavaScript #}
       </tbody>
     </table>
-    <div id="loading" class="text-center p-4 d-none">Loading...</div>
+    <div id="loading" class="text-center d-none">
+      <i class="feather icon-loader rotating"></i> Loading clients...
+    </div>
   </div>
 </div>
 
