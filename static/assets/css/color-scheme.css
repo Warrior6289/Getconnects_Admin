@@ -1,0 +1,244 @@
+/**
+ * GetConnects Admin - Professional Color Scheme
+ * Using the logo's cyan/turquoise color (#04a9f5)
+ */
+
+/* ===================================
+   GLOBAL COLOR VARIABLES
+   =================================== */
+
+:root {
+  --primary-color: #04a9f5;
+  --primary-dark: #0398db;
+  --primary-light: #1eb7ff;
+  --primary-gradient-start: #04a9f5;
+  --primary-gradient-end: #0398db;
+}
+
+/* ===================================
+   HEADER GRADIENTS
+   =================================== */
+
+/* Dashboard Header */
+.dashboard-header,
+.leads-header,
+.clients-header,
+.lead-types-header,
+.notifications-header,
+.settings-header,
+.staff-header,
+.test-header {
+  background: linear-gradient(135deg, #04a9f5 0%, #0398db 100%) !important;
+}
+
+/* ===================================
+   STAT CARDS
+   =================================== */
+
+.stat-clients {
+  background: linear-gradient(135deg, #04a9f5 0%, #0398db 100%) !important;
+}
+
+.stat-campaigns {
+  background: linear-gradient(135deg, #1ba976 0%, #169b6f 100%) !important;
+}
+
+.stat-leads {
+  background: linear-gradient(135deg, #0e7cc1 0%, #0c6fb3 100%) !important;
+}
+
+.stat-leads-week {
+  background: linear-gradient(135deg, #d4821a 0%, #c97916 100%) !important;
+}
+
+/* ===================================
+   BUTTONS
+   =================================== */
+
+.btn-primary,
+.btn-add-client,
+.btn-manage-group,
+.permissions-dropdown-item .form-check-input:checked {
+  background: linear-gradient(135deg, #04a9f5 0%, #0398db 100%) !important;
+  border-color: #04a9f5 !important;
+}
+
+.btn-primary:hover,
+.btn-add-client:hover,
+.btn-manage-group:hover {
+  background: linear-gradient(135deg, #1eb7ff 0%, #04a9f5 100%) !important;
+}
+
+/* ===================================
+   CARD HEADERS
+   =================================== */
+
+.content-card .card-header,
+.settings-card .card-header,
+.staff-card .card-header,
+.test-card .card-header,
+.clients-card .card-header,
+.leads-card .card-header,
+.modal-header {
+  background: linear-gradient(135deg, #04a9f5 0%, #0398db 100%) !important;
+}
+
+/* ===================================
+   TABLE HEADERS
+   =================================== */
+
+.table thead th,
+#clientsTable thead th,
+#campaignsTable thead th,
+#leadsTable thead th {
+  background: linear-gradient(135deg, #04a9f5 0%, #0398db 100%) !important;
+}
+
+/* ===================================
+   FOCUS STATES
+   =================================== */
+
+.form-control:focus,
+.form-select:focus {
+  border-color: #04a9f5 !important;
+  box-shadow: 0 0 0 3px rgba(4, 169, 245, 0.1) !important;
+}
+
+/* ===================================
+   HOVER EFFECTS
+   =================================== */
+
+.table tbody tr:hover,
+#clientsTable tbody tr:hover,
+#campaignsTable tbody tr:hover {
+  box-shadow: -4px 0 0 #04a9f5 !important;
+}
+
+.pagination .page-link:hover {
+  border-color: #04a9f5 !important;
+  color: #04a9f5 !important;
+}
+
+.pagination .page-item.active .page-link {
+  background: linear-gradient(135deg, #04a9f5 0%, #0398db 100%) !important;
+  border-color: #04a9f5 !important;
+}
+
+/* ===================================
+   TEXT COLORS
+   =================================== */
+
+.table tbody td:first-child,
+.table tbody td:nth-child(2),
+#clientsTable tbody td:first-child,
+#campaignsTable tbody td:first-child {
+  color: #04a9f5 !important;
+}
+
+.lead-type-group-title .lead-type-count {
+  background: rgba(4, 169, 245, 0.1) !important;
+  color: #04a9f5 !important;
+}
+
+/* ===================================
+   BORDERS & ACCENTS
+   =================================== */
+
+.lead-type-item {
+  border-left-color: #04a9f5 !important;
+}
+
+.lead-type-group-card::before {
+  background: linear-gradient(135deg, #04a9f5 0%, #0398db 100%) !important;
+}
+
+.lead-type-group-icon {
+  background: linear-gradient(135deg, #04a9f5 0%, #0398db 100%) !important;
+}
+
+/* ===================================
+   ROLE TOGGLE BUTTONS
+   =================================== */
+
+.role-toggle-button.active {
+  border-color: #04a9f5 !important;
+  background: linear-gradient(45deg, #04a9f5, #0398db) !important;
+  box-shadow: 0 4px 8px rgba(4, 169, 245, 0.3) !important;
+}
+
+/* ===================================
+   LINKS
+   =================================== */
+
+a,
+.table tbody td a {
+  color: #04a9f5 !important;
+}
+
+a:hover,
+.table tbody td a:hover {
+  color: #0398db !important;
+}
+
+/* ===================================
+   LOADING STATES
+   =================================== */
+
+#loading,
+.loading-spinner {
+  color: #04a9f5 !important;
+  border-top-color: #04a9f5 !important;
+}
+
+/* ===================================
+   NAVIGATION ACTIVE STATES
+   =================================== */
+
+.nav-tabs .nav-link.active {
+  color: #04a9f5 !important;
+  border-color: transparent transparent #04a9f5 transparent !important;
+}
+
+.nav-tabs .nav-link:hover {
+  color: #04a9f5 !important;
+}
+
+/* ===================================
+   OUTLINE BUTTONS
+   =================================== */
+
+.btn-outline-primary {
+  color: #04a9f5 !important;
+  border-color: #04a9f5 !important;
+}
+
+.btn-outline-primary:hover {
+  background: #04a9f5 !important;
+  color: #fff !important;
+}
+
+/* ===================================
+   CHARTS
+   =================================== */
+
+/* Morris.js chart colors will be set via JavaScript */
+
+/* ===================================
+   BADGES
+   =================================== */
+
+.badge-primary,
+.badge.bg-primary {
+  background: #04a9f5 !important;
+}
+
+/* ===================================
+   ALERTS
+   =================================== */
+
+.alert-info {
+  background: rgba(4, 169, 245, 0.1) !important;
+  border-left: 4px solid #04a9f5 !important;
+  color: #0398db !important;
+}
+
