@@ -7,8 +7,8 @@
   'use strict';
 
   /**
-   * Mobile Menu Handler
-   * Manages sidebar toggle for mobile devices
+   * Sidebar Menu Handler
+   * Manages sidebar toggle for both mobile and desktop devices
    */
   function initMobileMenu() {
     const mobileMenuToggle = document.getElementById('mobile-collapse');
@@ -20,8 +20,15 @@
       if (e) e.preventDefault();
       
       if (navbar) {
-        navbar.classList.toggle('mob-open');
-        body.classList.toggle('nav-open');
+        // Check if we're on desktop or mobile
+        if (window.innerWidth > 991) {
+          // Desktop: Toggle collapsed state
+          navbar.classList.toggle('navbar-collapsed');
+        } else {
+          // Mobile: Toggle mobile open state
+          navbar.classList.toggle('mob-open');
+          body.classList.toggle('nav-open');
+        }
       }
     }
 
@@ -40,14 +47,14 @@
       mobileMenuToggle2.addEventListener('click', toggleMenu);
     }
 
-    // Close menu when clicking overlay
+    // Close menu when clicking overlay (mobile only)
     body.addEventListener('click', function(e) {
-      if (body.classList.contains('nav-open') && !e.target.closest('.pcoded-navbar') && !e.target.closest('#mobile-collapse') && !e.target.closest('#mobile-collapse1')) {
+      if (window.innerWidth <= 991 && body.classList.contains('nav-open') && !e.target.closest('.pcoded-navbar') && !e.target.closest('#mobile-collapse') && !e.target.closest('#mobile-collapse1')) {
         closeMenu();
       }
     });
 
-    // Close menu on window resize to desktop size
+    // Handle window resize
     window.addEventListener('resize', function() {
       if (window.innerWidth > 991) {
         closeMenu();
