@@ -74,13 +74,32 @@
 /* Secondary and other buttons */
 .btn-secondary,
 .btn-danger,
-.btn {
+.btn,
+.btn-sm {
   color: #fff !important;
 }
 
 /* Filter button */
 .filter-card .btn-primary,
 .action-buttons-row .btn {
+  color: #fff !important;
+}
+
+/* Manage buttons in tables */
+.table .btn-primary,
+.table .btn-secondary,
+#clientsTable .btn,
+#campaignsTable .btn,
+.table tbody td .btn {
+  color: #fff !important;
+}
+
+/* Pagination buttons - keep text visible */
+.pagination .page-link {
+  color: #495057 !important;
+}
+
+.pagination .page-item.active .page-link {
   color: #fff !important;
 }
 
