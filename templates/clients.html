@@ -53,9 +53,13 @@
 {% endblock %}
 
 {% block content %}
-<h1 class="mb-3">Clients</h1>
-<div class="text-end mb-3">
-  <button class="btn btn-primary" data-toggle="modal" data-target="#addClientModal">+ Add Client</button>
+<div class="row align-items-center mb-3">
+  <div class="col-12 col-md-6">
+    <h1 class="mb-2 mb-md-0">Clients</h1>
+  </div>
+  <div class="col-12 col-md-6 text-md-end">
+    <button class="btn btn-primary w-100 w-md-auto" data-toggle="modal" data-target="#addClientModal">+ Add Client</button>
+  </div>
 </div>
 <div class="card">
   <div class="table-responsive">
@@ -277,7 +281,17 @@
         dataTableInstance = $('#clientsTable').DataTable({
           order: [[0, 'desc']], // Sort by ID descending
           pageLength: 10,
-          responsive: true
+          responsive: {
+            details: {
+              type: 'column',
+              target: 'tr'
+            }
+          },
+          columnDefs: [
+            { responsivePriority: 1, targets: 0 },
+            { responsivePriority: 2, targets: 1 },
+            { responsivePriority: 3, targets: -1 }
+          ]
         });
       } catch (error) {
         console.error('DataTables initialization error:', error);

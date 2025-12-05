@@ -11,27 +11,27 @@
         {% if credentials %}
         <form method="post" class="mb-4">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-          <div class="form-row align-items-center">
-            <div class="col-sm-4 mb-2">
+          <div class="row g-2 mb-3">
+            <div class="col-12 col-md-6 col-lg-4">
               <select name="sms_number" class="form-control">
                 {% for num in numbers %}
                 <option value="{{ num }}" {% if num == credentials.sms_number %}selected{% endif %}>{{ num }}</option>
                 {% endfor %}
               </select>
             </div>
-            <div class="col-auto mb-2">
-              <button class="btn btn-primary" name="save_number" value="1">Save Default Number</button>
+            <div class="col-12 col-md-6 col-lg-auto">
+              <button class="btn btn-primary w-100 w-lg-auto" name="save_number" value="1">Save Default Number</button>
             </div>
           </div>
-          <div class="form-row align-items-center">
-            <div class="col-sm-4 mb-2">
+          <div class="row g-2 mb-3">
+            <div class="col-12 col-md-6 col-lg-4">
               <input type="password" value="********" class="form-control" disabled>
             </div>
-            <div class="col-sm-4 mb-2">
+            <div class="col-12 col-md-6 col-lg-4">
               <input type="password" value="********" class="form-control" disabled>
             </div>
-            <div class="col-auto mb-2">
-              <button class="btn btn-danger" name="delete" value="1">Delete Credentials</button>
+            <div class="col-12 col-lg-auto">
+              <button class="btn btn-danger w-100 w-lg-auto" name="delete" value="1">Delete Credentials</button>
             </div>
           </div>
           <small class="form-text text-muted">Stored credentials are hidden.</small>
@@ -39,20 +39,20 @@
         {% else %}
         <form method="post" class="mb-4">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-          <div class="form-row align-items-center">
-            <div class="col-sm-4 mb-2">
+          <div class="row g-2">
+            <div class="col-12 col-md-6 col-lg-4">
               <input type="password" name="api_key" placeholder="API Key" class="form-control" required>
             </div>
-            <div class="col-sm-4 mb-2">
+            <div class="col-12 col-md-6 col-lg-4">
               <input type="password" name="api_secret" placeholder="API Secret" class="form-control" required>
             </div>
-            <div class="col-auto mb-2">
-              <button class="btn btn-primary">Save</button>
+            <div class="col-12 col-lg-auto">
+              <button class="btn btn-primary w-100 w-lg-auto">Save</button>
             </div>
           </div>
         </form>
         {% endif %}
-        <a href="/lead-types" class="btn btn-secondary">Manage Lead Types</a>
+        <a href="/lead-types" class="btn btn-secondary w-100 w-sm-auto">Manage Lead Types</a>
       </div>
     </div>
   </div>
@@ -67,19 +67,20 @@
       <div class="card-block">
         <form method="post" class="mb-3">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-          <div class="form-row">
-            <div class="col-sm-4 mb-2">
+          <div class="row g-2">
+            <div class="col-12 col-md-6 col-lg-4">
               <select name="target_type" class="form-control">
                 <option value="lead">Lead</option>
                 <option value="campaign">Campaign</option>
               </select>
             </div>
-            <div class="col-auto mb-2">
-              <button class="btn btn-primary" name="add_webhook" value="1">Add Webhook</button>
+            <div class="col-12 col-md-6 col-lg-auto">
+              <button class="btn btn-primary w-100 w-lg-auto" name="add_webhook" value="1">Add Webhook</button>
             </div>
           </div>
         </form>
-        <table class="table table-striped">
+        <div class="table-responsive">
+          <table class="table table-striped mb-0">
           <thead>
             <tr>
               <th>Token</th>
@@ -99,6 +100,7 @@
             {% endfor %}
           </tbody>
         </table>
+        </div>
       </div>
     </div>
   </div>

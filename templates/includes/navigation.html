@@ -21,9 +21,9 @@
     <div class="collapse navbar-collapse">
         <!-- Left side actions: fullscreen toggle, example dropdown and search -->
         <ul class="navbar-nav mr-auto">
-            <li><a href="javascript:" class="full-screen" onclick="javascript:toggleFullScreen()"><i
+            <li class="d-none d-lg-block"><a href="javascript:" class="full-screen" onclick="javascript:toggleFullScreen()"><i
                     class="feather icon-maximize"></i></a></li>
-            <li class="nav-item dropdown">
+            <li class="nav-item dropdown d-none d-md-block">
                 <a class="dropdown-toggle" href="javascript:" data-toggle="dropdown">Dropdown</a>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="javascript:">Action</a></li>
@@ -31,7 +31,7 @@
                     <li><a class="dropdown-item" href="javascript:">Something else here</a></li>
                 </ul>
             </li>
-            <li class="nav-item">
+            <li class="nav-item d-none d-md-block">
                 <div class="main-search">
                     <div class="input-group">
                         <input type="text" id="m-search" class="form-control" placeholder="Search . . .">

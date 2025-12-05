@@ -11,14 +11,14 @@
         <form method="post" class="mb-4">
           <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
           <input type="hidden" name="action" value="add" />
-          <div class="form-row">
-            <div class="col-sm-3 mb-2">
+          <div class="row">
+            <div class="col-12 col-sm-6 col-md-4 mb-3">
               <input type="text" name="first_name" placeholder="First Name" class="form-control" required>
             </div>
-            <div class="col-sm-3 mb-2">
+            <div class="col-12 col-sm-6 col-md-4 mb-3">
               <input type="text" name="last_name" placeholder="Last Name" class="form-control" required>
             </div>
-            <div class="col-sm-3 mb-2">
+            <div class="col-12 col-md-4 mb-3">
               <input type="email" name="email" placeholder="Email" class="form-control" required>
             </div>
           </div>
@@ -42,12 +42,19 @@
               </div>
             </div>
             <div class="tab-pane fade" id="add-perms" role="tabpanel" aria-labelledby="add-perms-tab">
-              {% for path, label in page_options %}
-              <div class="form-check form-check-inline">
-                <input type="checkbox" name="pages" value="{{ path }}" class="form-check-input" id="add_page_{{ loop.index }}">
-                <label class="form-check-label" for="add_page_{{ loop.index }}">{{ label }}</label>
+              <div class="permission-select-wrapper">
+                <label class="form-label">Select Permissions:</label>
+                <select name="pages" multiple class="form-select permission-select" id="add_permissions_select" size="8">
+                  {% for path, label in page_options %}
+                  <option value="{{ path }}">{{ label }}</option>
+                  {% endfor %}
+                </select>
+                <div class="permission-helper-buttons">
+                  <button type="button" class="btn btn-sm btn-outline-primary" onclick="selectAllPermissions('add_permissions_select')">Select All</button>
+                  <button type="button" class="btn btn-sm btn-outline-secondary" onclick="deselectAllPermissions('add_permissions_select')">Deselect All</button>
+                </div>
+                <small class="form-text text-muted mt-2 d-block">Hold Ctrl (Cmd on Mac) to select multiple items</small>
               </div>
-              {% endfor %}
             </div>
           </div>
           <button class="btn btn-primary">Add</button>
@@ -103,12 +110,19 @@
                         </div>
                       </div>
                       <div class="tab-pane fade" id="perms-{{ user.id }}" role="tabpanel" aria-labelledby="perms-tab-{{ user.id }}">
-                        {% for path, label in page_options %}
-                        <div class="form-check form-check-inline">
-                          <input class="form-check-input" type="checkbox" name="pages" value="{{ path }}" {% if path in user.permissions %}checked{% endif %} id="perm_{{ loop.index }}_{{ user.id }}">
-                          <label class="form-check-label" for="perm_{{ loop.index }}_{{ user.id }}">{{ label }}</label>
+                        <div class="permission-select-wrapper">
+                          <label class="form-label">Select Permissions:</label>
+                          <select name="pages" multiple class="form-select permission-select" id="permissions_select_{{ user.id }}" size="8">
+                            {% for path, label in page_options %}
+                            <option value="{{ path }}" {% if path in user.permissions %}selected{% endif %}>{{ label }}</option>
+                            {% endfor %}
+                          </select>
+                          <div class="permission-helper-buttons">
+                            <button type="button" class="btn btn-sm btn-outline-primary" onclick="selectAllPermissions('permissions_select_{{ user.id }}')">Select All</button>
+                            <button type="button" class="btn btn-sm btn-outline-secondary" onclick="deselectAllPermissions('permissions_select_{{ user.id }}')">Deselect All</button>
+                          </div>
+                          <small class="form-text text-muted mt-2 d-block">Hold Ctrl (Cmd on Mac) to select multiple items</small>
                         </div>
-                        {% endfor %}
                       </div>
                     </div>
                     <button class="btn btn-sm btn-secondary">Save</button>
@@ -123,4 +137,27 @@
     </div>
   </div>
 </div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+// Permission select helper functions
+function selectAllPermissions(selectId) {
+  const select = document.getElementById(selectId);
+  if (select) {
+    for (let i = 0; i < select.options.length; i++) {
+      select.options[i].selected = true;
+    }
+  }
+}
+
+function deselectAllPermissions(selectId) {
+  const select = document.getElementById(selectId);
+  if (select) {
+    for (let i = 0; i < select.options.length; i++) {
+      select.options[i].selected = false;
+    }
+  }
+}
+</script>
 {% endblock %}

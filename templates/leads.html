@@ -20,8 +20,8 @@
 </div>
 
 <form method="get" class="mb-3" id="filterForm">
-  <div class="form-row">
-    <div class="col">
+  <div class="row g-2">
+    <div class="col-12 col-md-6 col-lg-4 col-xl-2">
       <select name="client_id" id="filter_client" class="form-control">
         <option value="">All Clients</option>
         {% for c in clients %}
@@ -29,7 +29,7 @@
         {% endfor %}
       </select>
     </div>
-    <div class="col">
+    <div class="col-12 col-md-6 col-lg-4 col-xl-2">
       <select name="campaign_id" id="filter_campaign" class="form-control">
         <option value="">All Campaigns</option>
         {% for c in campaigns %}
@@ -37,7 +37,7 @@
         {% endfor %}
       </select>
     </div>
-    <div class="col">
+    <div class="col-12 col-md-6 col-lg-4 col-xl-2">
       <select name="lead_type" id="filter_lead_type" class="form-control">
         <option value="">All Lead Types</option>
         {% for lt in lead_types %}
@@ -45,22 +45,34 @@
         {% endfor %}
       </select>
     </div>
-    <div class="col">
-      <input type="date" name="start_date" class="form-control" value="{{ filters.start_date }}">
+    <div class="col-12 col-md-6 col-lg-4 col-xl-2">
+      <input type="date" name="start_date" class="form-control" value="{{ filters.start_date }}" placeholder="Start Date">
     </div>
-    <div class="col">
-      <input type="date" name="end_date" class="form-control" value="{{ filters.end_date }}">
+    <div class="col-12 col-md-6 col-lg-4 col-xl-2">
+      <input type="date" name="end_date" class="form-control" value="{{ filters.end_date }}" placeholder="End Date">
     </div>
-    <div class="col">
-      <button type="submit" class="btn btn-primary">Filter</button>
-      <a id="downloadReport" href="{{ url_for('pages.report_options', **filters) }}" class="btn btn-secondary" target="_blank">Download CSV</a>
+    <div class="col-12 col-md-6 col-lg-4 col-xl-2">
+      <button type="submit" class="btn btn-primary w-100">Filter</button>
+    </div>
   </div>
+  <div class="row mt-2">
+    <div class="col-12">
+      <a id="downloadReport" href="{{ url_for('pages.report_options', **filters) }}" class="btn btn-secondary w-100 w-md-auto" target="_blank">Download CSV</a>
+    </div>
   </div>
 </form>
-<div class="text-end mb-3">
-  <button class="btn btn-secondary" data-toggle="modal" data-target="#importModal">Import CSV</button>
-  <button class="btn btn-danger" id="bulkDeleteButton" form="bulkForm" disabled>Delete Selected</button>
-  <button class="btn btn-primary" data-toggle="modal" data-target="#addLeadModal">+ Add Lead</button>
+<div class="mb-3">
+  <div class="row g-2">
+    <div class="col-12 col-sm-4">
+      <button class="btn btn-secondary w-100" data-toggle="modal" data-target="#importModal">Import CSV</button>
+    </div>
+    <div class="col-12 col-sm-4">
+      <button class="btn btn-danger w-100" id="bulkDeleteButton" form="bulkForm" disabled>Delete Selected</button>
+    </div>
+    <div class="col-12 col-sm-4">
+      <button class="btn btn-primary w-100" data-toggle="modal" data-target="#addLeadModal">+ Add Lead</button>
+    </div>
+  </div>
 </div>
 <form id="bulkForm" method="post" action="{{ url_for('pages.bulk_delete_leads') }}">
   {{ form.csrf_token }}
