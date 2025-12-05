@@ -5,46 +5,291 @@
   {{ super() }}
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css">
   <style>
-    /* Align length selector and search input on one row */
+    /* Professional Campaigns Page Styling */
+    .campaigns-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+    }
+    
+    .campaigns-header h1 {
+      color: #fff;
+      font-weight: 600;
+      margin: 0;
+      font-size: 2rem;
+    }
+    
+    .campaigns-header .btn-sync {
+      background: rgba(255, 255, 255, 0.2);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      color: #fff;
+      font-weight: 500;
+      padding: 10px 24px;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      backdrop-filter: blur(10px);
+    }
+    
+    .campaigns-header .btn-sync:hover {
+      background: rgba(255, 255, 255, 0.3);
+      border-color: rgba(255, 255, 255, 0.5);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2);
+    }
+    
+    .campaigns-card {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+    }
+    
+    /* DataTables Controls Styling */
     #campaignsTable_wrapper .row:first-child {
+      background: #f8f9fa;
+      padding: 1.25rem;
+      border-radius: 12px 12px 0 0;
+      margin: 0;
       display: flex;
       align-items: center;
-      flex-wrap: wrap;
-      gap: .5rem;
+      justify-content: space-between;
+      gap: 1rem;
+      border-bottom: 2px solid #e9ecef;
     }
-    #campaignsTable_wrapper .row:first-child > div {
-      flex: 0 0 auto;
-      width: auto;
+    
+    #campaignsTable_wrapper .dataTables_length {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
-
-    /* Search bar spacing */
-    #campaignsTable_filter {
-      margin-left: auto;
-      margin-top: 10px;
+    
+    #campaignsTable_wrapper .dataTables_length label {
+      margin: 0;
+      font-size: 14px;
+      color: #495057;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
     }
-
-    /* Rounded search bar */
-    #campaignsTable_filter input {
-      border-radius: 50rem;
+    
+    #campaignsTable_wrapper .dataTables_length select {
+      width: 70px;
+      padding: 6px 12px;
+      border: 2px solid #e0e0e0;
+      border-radius: 6px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+    
+    #campaignsTable_wrapper .dataTables_length select:focus {
+      border-color: #667eea;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    #campaignsTable_wrapper .dataTables_filter {
+      margin: 0;
+    }
+    
+    #campaignsTable_wrapper .dataTables_filter label {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 14px;
+      color: #495057;
+      font-weight: 500;
+    }
+    
+    #campaignsTable_wrapper .dataTables_filter input {
+      width: 280px;
+      padding: 8px 16px;
+      border: 2px solid #e0e0e0;
+      border-radius: 50px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+    }
+    
+    #campaignsTable_wrapper .dataTables_filter input:focus {
+      border-color: #667eea;
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      width: 320px;
+    }
+    
+    /* Table Styling */
+    #campaignsTable {
+      margin: 0 !important;
+    }
+    
+    #campaignsTable thead th {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      padding: 16px 20px;
+      border: none;
+      white-space: nowrap;
+    }
+    
+    #campaignsTable tbody tr {
+      transition: all 0.2s ease;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    #campaignsTable tbody tr:hover {
+      background: #f8f9ff !important;
+      transform: translateX(4px);
+      box-shadow: -4px 0 0 #667eea;
+    }
+    
+    #campaignsTable tbody td {
+      padding: 16px 20px;
+      vertical-align: middle;
+      font-size: 14px;
+      color: #495057;
+    }
+    
+    #campaignsTable tbody td:first-child {
+      font-weight: 600;
+      color: #667eea;
+    }
+    
+    #campaignsTable tbody td .btn-secondary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      color: #fff;
+      padding: 6px 16px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    }
+    
+    #campaignsTable tbody td .btn-secondary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    
+    /* Pagination Styling */
+    #campaignsTable_wrapper .dataTables_info {
+      padding: 1.25rem;
+      font-size: 14px;
+      color: #6c757d;
+      font-weight: 500;
+    }
+    
+    #campaignsTable_wrapper .dataTables_paginate {
+      padding: 1.25rem;
+    }
+    
+    #campaignsTable_wrapper .pagination {
+      margin: 0;
+      gap: 0.25rem;
+    }
+    
+    #campaignsTable_wrapper .pagination .page-link {
+      border: 2px solid #e0e0e0;
+      color: #495057;
+      padding: 8px 14px;
+      border-radius: 6px;
+      font-weight: 500;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      margin: 0 2px;
+    }
+    
+    #campaignsTable_wrapper .pagination .page-link:hover {
+      background: #f8f9ff;
+      border-color: #667eea;
+      color: #667eea;
+    }
+    
+    #campaignsTable_wrapper .pagination .page-item.active .page-link {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-color: #667eea;
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    }
+    
+    #campaignsTable_wrapper .pagination .page-item.disabled .page-link {
+      background: #f8f9fa;
+      border-color: #e9ecef;
+      color: #adb5bd;
+    }
+    
+    /* Loading State */
+    #loading {
+      padding: 3rem !important;
+      font-size: 16px;
+      color: #667eea;
+      font-weight: 500;
+    }
+    
+    /* Empty State */
+    #campaignsTable tbody tr td[colspan] {
+      text-align: center;
+      padding: 3rem !important;
+      font-size: 16px;
+      color: #6c757d;
+      font-style: italic;
+    }
+    
+    /* Responsive */
+    @media (max-width: 768px) {
+      .campaigns-header {
+        padding: 1.5rem;
+      }
+      
+      .campaigns-header h1 {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+      }
+      
+      #campaignsTable_wrapper .row:first-child {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      
+      #campaignsTable_wrapper .dataTables_filter input {
+        width: 100%;
+      }
+      
+      #campaignsTable_wrapper .dataTables_filter input:focus {
+        width: 100%;
+      }
     }
   </style>
 {% endblock %}
 
 {% block content %}
-<div class="row align-items-center mb-3">
-  <div class="col-12 col-md-6">
-    <h1 class="mb-2 mb-md-0">Campaigns</h1>
-  </div>
-  <div class="col-12 col-md-6">
-    <form method="post" action="/campaigns/sync" class="text-md-end">
-      <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
-      <button class="btn btn-primary w-100 w-md-auto">Sync Campaigns</button>
-    </form>
+<!-- Professional Header with Gradient -->
+<div class="campaigns-header">
+  <div class="row align-items-center">
+    <div class="col-12 col-md-6">
+      <h1>Campaigns</h1>
+    </div>
+    <div class="col-12 col-md-6 text-md-end mt-3 mt-md-0">
+      <form method="post" action="/campaigns/sync" class="d-inline">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}" />
+        <button class="btn btn-sync w-100 w-md-auto">
+          <i class="feather icon-refresh-cw me-2"></i>Sync Campaigns
+        </button>
+      </form>
+    </div>
   </div>
 </div>
-<div class="card">
+
+<!-- Professional Data Table Card -->
+<div class="card campaigns-card">
   <div class="table-responsive">
-    <table id="campaignsTable" class="table table-striped table-hover mb-0">
+    <table id="campaignsTable" class="table table-hover mb-0">
       <thead>
         <tr>
           <th>ID</th>
@@ -52,12 +297,14 @@
           <th>Status</th>
           <th>Client</th>
           <th>Lead Type Groups</th>
-          <th></th>
+          <th>Actions</th>
         </tr>
       </thead>
       <tbody id="campaignRows"></tbody>
     </table>
-    <div id="loading" class="text-center p-4 d-none">Loading...</div>
+    <div id="loading" class="text-center d-none">
+      <i class="feather icon-loader rotating"></i> Loading campaigns...
+    </div>
   </div>
 </div>
 {% endblock %}
