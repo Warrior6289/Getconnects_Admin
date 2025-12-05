@@ -61,12 +61,27 @@
 .permissions-dropdown-item .form-check-input:checked {
   background: linear-gradient(135deg, #04a9f5 0%, #0398db 100%) !important;
   border-color: #04a9f5 !important;
+  color: #fff !important;
 }
 
 .btn-primary:hover,
 .btn-add-client:hover,
 .btn-manage-group:hover {
   background: linear-gradient(135deg, #1eb7ff 0%, #04a9f5 100%) !important;
+  color: #fff !important;
+}
+
+/* Secondary and other buttons */
+.btn-secondary,
+.btn-danger,
+.btn {
+  color: #fff !important;
+}
+
+/* Filter button */
+.filter-card .btn-primary,
+.action-buttons-row .btn {
+  color: #fff !important;
 }
 
 /* ===================================
