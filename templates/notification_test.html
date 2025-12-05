@@ -1,11 +1,125 @@
 {% extends 'base.html' %}
 {% block title %}Notification Tests - GetConnects Portal{% endblock %}
+
+{% block stylesheets %}
+  {{ super() }}
+  <style>
+    /* Professional Notification Test Page Styling */
+    .test-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+    }
+    
+    .test-header h1 {
+      color: #fff;
+      font-weight: 600;
+      margin: 0;
+      font-size: 2rem;
+    }
+    
+    .test-card {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      height: 100%;
+    }
+    
+    .test-card .card-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      font-weight: 600;
+      padding: 1.25rem 1.5rem;
+      border-bottom: none;
+    }
+    
+    .test-card .card-header h5 {
+      margin: 0;
+      color: #fff;
+      font-size: 1.125rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .test-card .card-block {
+      padding: 1.75rem;
+    }
+    
+    .form-group {
+      margin-bottom: 1.25rem;
+    }
+    
+    .form-control, .form-select {
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+      padding: 10px 14px;
+      transition: all 0.3s ease;
+      font-size: 14px;
+    }
+    
+    .form-control:focus, .form-select:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+      outline: none;
+    }
+    
+    textarea.form-control {
+      min-height: 120px;
+      resize: vertical;
+    }
+    
+    .btn-primary {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border: none;
+      padding: 12px 32px;
+      border-radius: 8px;
+      font-weight: 500;
+      transition: all 0.3s ease;
+      box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+      width: 100%;
+      font-size: 15px;
+    }
+    
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    }
+    
+    .btn-primary:active {
+      transform: translateY(0);
+    }
+    
+    @media (max-width: 768px) {
+      .test-header {
+        padding: 1.5rem;
+      }
+      
+      .test-header h1 {
+        font-size: 1.5rem;
+      }
+      
+      .col-md-6 {
+        margin-bottom: 1.5rem !important;
+      }
+    }
+  </style>
+{% endblock %}
+
 {% block content %}
+<!-- Professional Header with Gradient -->
+<div class="test-header">
+  <h1><i class="feather icon-send me-3"></i>Notification Tests</h1>
+</div>
+
 <div class="row">
   <div class="col-md-6 mb-4">
-    <div class="card">
+    <div class="card test-card">
       <div class="card-header">
-        <h5>SMS Test</h5>
+        <h5><i class="feather icon-message-square me-2"></i>SMS Test</h5>
       </div>
       <div class="card-block">
         <form method="post">
@@ -29,9 +143,9 @@
     </div>
   </div>
   <div class="col-md-6 mb-4">
-    <div class="card">
+    <div class="card test-card">
       <div class="card-header">
-        <h5>Email Test</h5>
+        <h5><i class="feather icon-mail me-2"></i>Email Test</h5>
       </div>
       <div class="card-block">
         <form method="post">
