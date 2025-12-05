@@ -1,8 +1,213 @@
 {# Dashboard landing page showing statistics and top clients. #}
 {% extends 'base.html' %}
 {% block title %}Dashboard - GetConnects Portal{% endblock %}
+
+{% block stylesheets %}
+  {{ super() }}
+  <style>
+    /* Professional Dashboard Styling */
+    .dashboard-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      padding: 2rem;
+      border-radius: 12px;
+      margin-bottom: 2rem;
+      box-shadow: 0 4px 20px rgba(102, 126, 234, 0.15);
+    }
+    
+    .dashboard-header h1 {
+      color: #fff;
+      font-weight: 600;
+      margin: 0;
+      font-size: 2rem;
+    }
+    
+    /* Enhanced Stat Cards */
+    .stat-card {
+      border: none;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stat-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    }
+    
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0) 100%);
+      pointer-events: none;
+    }
+    
+    .stat-card .card-body {
+      padding: 1.75rem;
+      position: relative;
+      z-index: 1;
+    }
+    
+    .stat-card .icon {
+      font-size: 3rem;
+      opacity: 0.3;
+    }
+    
+    .stat-card .text-white {
+      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    
+    .stat-clients {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    .stat-campaigns {
+      background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+    
+    .stat-leads {
+      background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+    
+    .stat-leads-week {
+      background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+    }
+    
+    .stat-card .fw-semibold {
+      font-size: 14px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin-bottom: 0.5rem;
+    }
+    
+    .stat-card .h3 {
+      font-size: 2.5rem;
+      font-weight: 700;
+      line-height: 1;
+    }
+    
+    /* Content Cards */
+    .content-card {
+      border: none;
+      border-radius: 12px;
+      box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+      overflow: hidden;
+      margin-bottom: 2rem;
+    }
+    
+    .content-card .card-header {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      font-weight: 600;
+      padding: 1.25rem 1.5rem;
+      border-bottom: none;
+    }
+    
+    .content-card .card-header h5 {
+      margin: 0;
+      color: #fff;
+      font-size: 1.125rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+    
+    .content-card .card-body {
+      padding: 1.75rem;
+    }
+    
+    /* Table Styling */
+    .table {
+      margin-bottom: 0;
+    }
+    
+    .table thead th {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: #fff;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      padding: 16px 20px;
+      border: none;
+    }
+    
+    .table tbody tr {
+      transition: all 0.2s ease;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    
+    .table tbody tr:hover {
+      background: #f8f9ff !important;
+      transform: translateX(4px);
+      box-shadow: -4px 0 0 #667eea;
+    }
+    
+    .table tbody td {
+      padding: 16px 20px;
+      vertical-align: middle;
+      font-size: 14px;
+      color: #495057;
+    }
+    
+    .table tbody td:first-child {
+      font-weight: 600;
+      color: #667eea;
+    }
+    
+    /* Chart Container */
+    #leadsPerCampaign {
+      min-height: 300px;
+    }
+    
+    /* Loading State */
+    #loading {
+      color: #667eea;
+      font-weight: 500;
+      padding: 3rem !important;
+    }
+    
+    /* Empty State */
+    .table tbody tr td[colspan] {
+      text-align: center;
+      padding: 3rem !important;
+      font-size: 16px;
+      color: #6c757d;
+      font-style: italic;
+    }
+    
+    @media (max-width: 768px) {
+      .dashboard-header {
+        padding: 1.5rem;
+      }
+      
+      .dashboard-header h1 {
+        font-size: 1.5rem;
+      }
+      
+      .stat-card .h3 {
+        font-size: 2rem;
+      }
+      
+      .stat-card .card-body {
+        padding: 1.5rem;
+      }
+    }
+  </style>
+{% endblock %}
+
 {% block content %}
-<h1 class="mb-3">Dashboard</h1>
+<!-- Professional Header with Gradient -->
+<div class="dashboard-header">
+  <h1><i class="feather icon-home me-3"></i>Dashboard</h1>
+</div>
+
+<!-- Statistics Cards -->
 <div class="row g-3 mb-4">
   <div class="col-12 col-sm-6 col-md-6 col-lg-3">
     <div class="card stat-card stat-clients">
@@ -11,7 +216,7 @@
           <div class="text-white fw-semibold">Total Clients</div>
           <div class="h3 mb-0 text-white fw-bold" id="statClients">{{ stats.clients or 0 }}</div>
         </div>
-        <div class="icon"><i class="fas fa-users"></i></div>
+        <div class="icon"><i class="feather icon-briefcase"></i></div>
       </div>
     </div>
   </div>
@@ -22,7 +227,7 @@
           <div class="text-white fw-semibold">Active Campaigns</div>
           <div class="h3 mb-0 text-white fw-bold" id="statCampaigns">{{ stats.campaigns or 0 }}</div>
         </div>
-        <div class="icon"><i class="fas fa-bullhorn"></i></div>
+        <div class="icon"><i class="feather icon-target"></i></div>
       </div>
     </div>
   </div>
@@ -33,7 +238,7 @@
           <div class="text-white fw-semibold">Total Leads</div>
           <div class="h3 mb-0 text-white fw-bold" id="statLeads">{{ stats.leads or 0 }}</div>
         </div>
-        <div class="icon"><i class="fas fa-user-plus"></i></div>
+        <div class="icon"><i class="feather icon-users"></i></div>
       </div>
     </div>
   </div>
@@ -44,14 +249,16 @@
           <div class="text-white fw-semibold">Leads This Week</div>
           <div class="h3 mb-0 text-white fw-bold" id="statLeadsWeek">{{ stats.leads_week or 0 }}</div>
         </div>
-        <div class="icon"><i class="fas fa-calendar-week"></i></div>
+        <div class="icon"><i class="feather icon-trending-up"></i></div>
       </div>
     </div>
   </div>
 </div>
-<div class="card">
+
+<!-- Leads This Week Table -->
+<div class="card content-card">
   <div class="card-header">
-    <h5 class="mb-0">Leads This Week</h5>
+    <h5><i class="feather icon-calendar me-2"></i>Leads This Week</h5>
   </div>
   <div class="table-responsive">
     <table class="table mb-0 table-leads-week">
@@ -78,12 +285,13 @@
   </div>
 </div>
 
-<div class="card mt-4">
+<!-- Leads by Campaign Chart -->
+<div class="card content-card">
   <div class="card-header">
-    <h5 class="mb-0">Leads by Campaign</h5>
+    <h5><i class="feather icon-bar-chart-2 me-2"></i>Leads by Campaign</h5>
   </div>
   <div class="card-body">
-    <div id="leadsPerCampaign" style="height: 250px;"></div>
+    <div id="leadsPerCampaign" style="height: 300px;"></div>
   </div>
 </div>
 
@@ -134,8 +342,12 @@
         xkey: 'y',
         ykeys: ['leads'],
         labels: ['Leads'],
-        barColors: ['#04a9f5'],
-        resize: true
+        barColors: ['#667eea'],
+        gridTextColor: '#495057',
+        gridTextSize: 12,
+        resize: true,
+        hideHover: 'auto',
+        barSizeRatio: 0.5
       });
     }
 
