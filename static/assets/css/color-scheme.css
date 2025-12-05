@@ -191,7 +191,7 @@ a:hover,
 }
 
 /* ===================================
-   NAVIGATION ACTIVE STATES
+   NAVIGATION ACTIVE STATES (Tabs Only)
    =================================== */
 
 .nav-tabs .nav-link.active {
@@ -201,6 +201,19 @@ a:hover,
 
 .nav-tabs .nav-link:hover {
   color: #04a9f5 !important;
+}
+
+/* ===================================
+   SIDEBAR NAVIGATION - KEEP ORIGINAL
+   =================================== */
+
+/* Exclude sidebar from color changes */
+.pcoded-navbar,
+.pcoded-navbar .nav-link,
+.pcoded-navbar .pcoded-mtext,
+.pcoded-navbar .nav-item.active,
+.pcoded-navbar .nav-item:hover {
+  /* Keep original sidebar colors - do not override */
 }
 
 /* ===================================
