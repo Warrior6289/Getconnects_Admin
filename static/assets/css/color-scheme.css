@@ -191,6 +191,26 @@ a:hover,
 }
 
 /* ===================================
+   SIDEBAR NAVIGATION - WHITE TEXT
+   =================================== */
+
+.pcoded-navbar .nav-link,
+.pcoded-navbar .pcoded-mtext,
+.pcoded-navbar .nav-item a {
+  color: #fff !important;
+}
+
+.pcoded-navbar .nav-item:hover .nav-link,
+.pcoded-navbar .nav-item:hover .pcoded-mtext {
+  color: #fff !important;
+}
+
+.pcoded-navbar .nav-item.active .nav-link,
+.pcoded-navbar .nav-item.active .pcoded-mtext {
+  color: #fff !important;
+}
+
+/* ===================================
    NAVIGATION ACTIVE STATES (Tabs Only)
    =================================== */
 
@@ -201,19 +221,6 @@ a:hover,
 
 .nav-tabs .nav-link:hover {
   color: #04a9f5 !important;
-}
-
-/* ===================================
-   SIDEBAR NAVIGATION - KEEP ORIGINAL
-   =================================== */
-
-/* Exclude sidebar from color changes */
-.pcoded-navbar,
-.pcoded-navbar .nav-link,
-.pcoded-navbar .pcoded-mtext,
-.pcoded-navbar .nav-item.active,
-.pcoded-navbar .nav-item:hover {
-  /* Keep original sidebar colors - do not override */
 }
 
 /* ===================================
